@@ -1,6 +1,7 @@
 module at.ac.fhcampuswien.fhmdb {
-    requires javafx.controls;
     requires javafx.fxml;
+    requires com.jfoenix;
+    requires javafx.controls;
 
 
     opens at.ac.fhcampuswien.fhmdb to javafx.fxml;
