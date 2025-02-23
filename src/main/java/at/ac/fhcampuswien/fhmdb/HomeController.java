@@ -18,7 +18,7 @@ import java.util.ResourceBundle;
 
 public class HomeController implements Initializable {
     @FXML
-    public JFXButton searchButton;
+    public JFXButton searchBtn;
 
     @FXML
     public TextField searchField;
@@ -64,6 +64,15 @@ public class HomeController implements Initializable {
             }
         });
 
+        searchBtn.setOnAction(actionEvent -> {
+            // String query = searchField.getText(); // Get search query from searchField
+            // TODO Get selected Genre from Dropdown menu
+
+            // TODO Replace Filter method
+            // List<Movie> filteredMovies = MovieDisplayHelper.INSERT_FILTER_HERE(allMovies, query);
+
+            // observableMovies.setAll(filteredMovies);
+        });
 
     }
 }

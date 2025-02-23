@@ -14,8 +14,8 @@ public class MovieDisplayHelper {
 
     //Filter the incoming List of Movies by the search query
     public static List<Movie> filterSearch(List<Movie> moviesToFilter, String query) {
-        if (query == null || query.isEmpty()) {     //empty or null queries return unmodified list
-            return moviesToFilter;
+        if (query == null || query.isBlank()) {     //empty or null queries return unmodified list
+            return new ArrayList<>(moviesToFilter);
         }
         List<Movie> filteredMovies = new ArrayList<Movie>();
         String sanitizedQuery = query.toLowerCase().trim().replaceAll("\\s+", " ");     //repair search query
@@ -27,4 +27,7 @@ public class MovieDisplayHelper {
         }
         return filteredMovies;
     }
+
+    // TODO Create Filter for Genre
+    // TODO Create Method for Both Filters(?)
 }
