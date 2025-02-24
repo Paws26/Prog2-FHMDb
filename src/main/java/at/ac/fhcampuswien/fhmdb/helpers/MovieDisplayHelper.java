@@ -1,7 +1,7 @@
 package at.ac.fhcampuswien.fhmdb.helpers;
 
+import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
-import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,5 +29,20 @@ public class MovieDisplayHelper {
     }
 
     // TODO Create Filter for Genre
+    public static List<Movie> filterMoviesByGenre(List<Movie> moviesToFilter, Genre genre) {
+        if (genre == null) {
+            return moviesToFilter;
+        }
+        List<Movie> filteredMovies = new ArrayList<>();
+
+        for (Movie movie : moviesToFilter) {
+            if (movie.getGenres().contains(genre)) {
+                filteredMovies.add(movie);
+            }
+        }
+        return filteredMovies;
+    }
+
+
     // TODO Create Method for Both Filters(?)
 }

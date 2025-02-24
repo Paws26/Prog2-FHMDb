@@ -1,6 +1,7 @@
 package at.ac.fhcampuswien.fhmdb;
 
 import at.ac.fhcampuswien.fhmdb.helpers.MovieDisplayHelper;
+import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
 import com.jfoenix.controls.JFXButton;
@@ -11,6 +12,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
+import javafx.util.StringConverter;
 
 import java.net.URL;
 import java.util.List;
@@ -35,6 +37,7 @@ public class HomeController implements Initializable {
     public List<Movie> allMovies = Movie.initializeMovies();
 
     private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
+    private final ObservableList<Genre> observableGenres = FXCollections.observableArrayList();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -44,8 +47,9 @@ public class HomeController implements Initializable {
         movieListView.setItems(observableMovies);   // set data of observable list to list view
         movieListView.setCellFactory(movieListView -> new MovieCell()); // use custom cell factory to display data
 
-        // TODO add genre filter items with genreComboBox.getItems().addAll(...)
         genreComboBox.setPromptText("Filter by Genre");
+        genreComboBox.getItems().add(0, null);
+        genreComboBox.getItems().addAll(FXCollections.observableArrayList(Genre.values()));
 
         // TODO add event handlers to buttons and call the regarding methods
         // either set event handlers in the fxml file (onAction) or add them here
@@ -66,13 +70,16 @@ public class HomeController implements Initializable {
 
         searchBtn.setOnAction(actionEvent -> {
             // String query = searchField.getText(); // Get search query from searchField
-            // TODO Get selected Genre from Dropdown menu
+
+            Genre genre = (Genre) genreComboBox.getValue();
 
             // TODO Replace Filter method
             // List<Movie> filteredMovies = MovieDisplayHelper.INSERT_FILTER_HERE(allMovies, query);
+            List<Movie> filteredMovies = MovieDisplayHelper.filterMoviesByGenre(allMovies, genre);
 
-            // observableMovies.setAll(filteredMovies);
+            observableMovies.setAll(filteredMovies);
         });
+
 
     }
 }
