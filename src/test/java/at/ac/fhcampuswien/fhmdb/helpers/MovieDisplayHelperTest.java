@@ -6,9 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -68,7 +66,7 @@ class MovieDisplayHelperTest {
         List<Movie> actual = MovieDisplayHelper.filterSearch(movies, "story");
         assertEquals(2, actual.size(), "Single word search \"story\" should have exactly two matches.");
         assertEquals("The life story of a slow-witted but kind-hearted man.", actual.get(0).getDescription(), "The filtered List should contain the movie \"Forrest Gump\".");
-        assertEquals("A love story set aboard the ill-fated RMS Titanic.", actual.get(1).getDescription(), "The filtered List should contain the movie \"Titanic\".");;
+        assertEquals("A love story set aboard the ill-fated RMS Titanic.", actual.get(1).getDescription(), "The filtered List should contain the movie \"Titanic\".");
     }
 
     @Test
