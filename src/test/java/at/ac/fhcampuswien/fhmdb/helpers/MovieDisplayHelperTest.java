@@ -163,5 +163,28 @@ class MovieDisplayHelperTest {
         assertTrue(actual.contains(interstellar));
     }
 
+    //test sorts observableMovies alphabetically ascending
+    @Test
+    void sort_movies_ascending_returns_sorted_list() {
+        List<Movie> unsorted = new ArrayList<>();
+        unsorted.add(new Movie("Titanic", "A love story set aboard the ill-fated RMS Titanic.",
+                List.of(Genre.ROMANCE, Genre.DRAMA, Genre.HISTORY)));
+        unsorted.add(new Movie("Inception", "A thief enters people's dreams to steal secrets.",
+                List.of(Genre.ACTION, Genre.SCIENCE_FICTION, Genre.THRILLER)));
+        unsorted.add(new Movie("Forrest Gump", "The life story of a slow-witted but kind-hearted man.",
+                List.of(Genre.DRAMA, Genre.ROMANCE, Genre.COMEDY)));
+
+        MovieDisplayHelper helper = new MovieDisplayHelper(unsorted);
+        helper.sortMoviesAscending();
+        List<Movie> sorted = helper.getObservableMovies();
+
+        // expected: "Forrest Gump", "Inception", "Titanic"
+        assertEquals("Forrest Gump", sorted.get(0).getTitle(), "Expected first movie: 'Forrest Gump'");
+        assertEquals("Inception", sorted.get(1).getTitle(), "Expected second movie: 'Inception'");
+        assertEquals("Titanic", sorted.get(2).getTitle(), "Expected third movie: 'Titanic'");
+    }
+
+
+
 
 }

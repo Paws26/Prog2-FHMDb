@@ -2,11 +2,29 @@ package at.ac.fhcampuswien.fhmdb.helpers;
 
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class MovieDisplayHelper {
+
+    private ObservableList<Movie> observableMovies;
+
+    public MovieDisplayHelper(List<Movie> movies) {
+        this.observableMovies = FXCollections.observableArrayList(movies);
+    }
+
+    // sorts observableMovies alphabetically ascending
+    public void sortMoviesAscending() {
+        FXCollections.sort(observableMovies, Comparator.comparing(Movie::getTitle));
+    }
+
+    public List<Movie> getObservableMovies() {
+        return observableMovies;
+    }
 
     public static List<Movie> sort(List<Movie> observableMovies) {
         return null;
