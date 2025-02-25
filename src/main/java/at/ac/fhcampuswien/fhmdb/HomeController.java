@@ -55,10 +55,9 @@ public class HomeController implements Initializable {
         // Sort button example:
         sortBtn.setOnAction(actionEvent -> {
             if(sortBtn.getText().equals("Sort (asc)")) {
-                List<Movie> sortedMovies = MovieDisplayHelper.sort(observableMovies);
+                List<Movie> sortedMovies = MovieDisplayHelper.sortMoviesAscending(observableMovies);
                 observableMovies.clear();
                 observableMovies.addAll(sortedMovies);
-                // TODO sort observableMovies ascending
                 sortBtn.setText("Sort (desc)");
             } else {
                 // TODO sort observableMovies descending
@@ -67,13 +66,10 @@ public class HomeController implements Initializable {
         });
 
         searchBtn.setOnAction(actionEvent -> {
-            // String query = searchField.getText(); // Get search query from searchField
+            String query = searchField.getText(); // Get search query from searchField
+            Genre genre = (Genre) genreComboBox.getValue(); // Get genre from genreComboBox
 
-            Genre genre = (Genre) genreComboBox.getValue();
-
-            // TODO Replace Filter method
-            // List<Movie> filteredMovies = MovieDisplayHelper.INSERT_FILTER_HERE(allMovies, query);
-            List<Movie> filteredMovies = MovieDisplayHelper.filterMoviesByGenre(allMovies, genre);
+            List<Movie> filteredMovies = MovieDisplayHelper.filterMovies(allMovies, query, genre);
 
             observableMovies.setAll(filteredMovies);
         });

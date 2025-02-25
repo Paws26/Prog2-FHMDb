@@ -2,6 +2,8 @@ package at.ac.fhcampuswien.fhmdb.helpers;
 
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -38,32 +40,32 @@ class MovieDisplayHelperTest {
 
     @Test
     void search_field_empty_returns_unmodified_list() {
-        List<Movie> actual = MovieDisplayHelper.filterSearch(movies, "");
+        List<Movie> actual = MovieDisplayHelper.filterMoviesBySearch(movies, "");
         assertEquals(movies, actual, "An empty search query should return an unmodified list.");
     }
 
     @Test
     void search_field_null_returns_unmodified_list() {
-        List<Movie> actual = MovieDisplayHelper.filterSearch(movies, null);
+        List<Movie> actual = MovieDisplayHelper.filterMoviesBySearch(movies, null);
         assertEquals(movies, actual, "A null search query should return an unmodified list.");
     }
 
     @Test
     void search_query_finds_no_match_returns_empty_list() {
-        List<Movie> actual = MovieDisplayHelper.filterSearch(movies, "A Query that should never Match!!!_?§$%&/)");
+        List<Movie> actual = MovieDisplayHelper.filterMoviesBySearch(movies, "A Query that should never Match!!!_?§$%&/)");
         assertTrue(actual.isEmpty(), "Non-matching query should return an empty list.");
     }
 
     @Test
     void search_query_finds_1_match_in_title_returns_modified_list() {
-        List<Movie> actual = MovieDisplayHelper.filterSearch(movies, "Dark");
+        List<Movie> actual = MovieDisplayHelper.filterMoviesBySearch(movies, "Dark");
         assertEquals(1, actual.size(), "Single word search \"Dark\" should have exactly one match.");
         assertEquals("The Dark Knight", actual.get(0).getTitle(), "The filtered List should contain the movie \"The Dark Knight\".");
     }
 
     @Test
     void search_query_finds_2_matches_in_description_returns_modified_list() {
-        List<Movie> actual = MovieDisplayHelper.filterSearch(movies, "story");
+        List<Movie> actual = MovieDisplayHelper.filterMoviesBySearch(movies, "story");
         assertEquals(2, actual.size(), "Single word search \"story\" should have exactly two matches.");
         assertEquals("The life story of a slow-witted but kind-hearted man.", actual.get(0).getDescription(), "The filtered List should contain the movie \"Forrest Gump\".");
         assertEquals("A love story set aboard the ill-fated RMS Titanic.", actual.get(1).getDescription(), "The filtered List should contain the movie \"Titanic\".");
@@ -71,33 +73,33 @@ class MovieDisplayHelperTest {
 
     @Test
     void multiple_word_search_query_finds_1_match_returns_modified_list() {
-        List<Movie> actual = MovieDisplayHelper.filterSearch(movies, "Dark Knight");
+        List<Movie> actual = MovieDisplayHelper.filterMoviesBySearch(movies, "Dark Knight");
         assertEquals(1, actual.size(), "Multi-word search \"Dark Knight\" should have exactly one match.");
         assertEquals("The Dark Knight", actual.get(0).getTitle(), "The filtered List should contain the movie \"The Dark Knight\".");
     }
 
     @Test
     void case_sensitive_search_query_finds_1_match_returns_modified_list() {
-        List<Movie> actual = MovieDisplayHelper.filterSearch(movies, "the godfather");
+        List<Movie> actual = MovieDisplayHelper.filterMoviesBySearch(movies, "the godfather");
         assertEquals(1, actual.size(), "Case-insensitive search \"the godfather\" should still find the match.");
     }
 
     @Test
     void partial_search_query_finds_1_match_returns_modified_list() {
-        List<Movie> actual = MovieDisplayHelper.filterSearch(movies, "terstellar");
+        List<Movie> actual = MovieDisplayHelper.filterMoviesBySearch(movies, "terstellar");
         assertEquals(1, actual.size(), "Partial search query should match \"Interstellar\".");
     }
 
     @Test
     void trailing_and_leading_whitespace_search_query_finds_1_match_returns_modified_list() {
-        List<Movie> actual = MovieDisplayHelper.filterSearch(movies, "  inception  ");
+        List<Movie> actual = MovieDisplayHelper.filterMoviesBySearch(movies, "  inception  ");
         assertEquals(1, actual.size(), "Search should ignore trailing/leading whitespace.");
     }
 
     @Test
     void empty_movie_list_returns_empty_list() {
         List<Movie> emptyMovies = new ArrayList<>();
-        List<Movie> actual = MovieDisplayHelper.filterSearch(emptyMovies, "Inception");
+        List<Movie> actual = MovieDisplayHelper.filterMoviesBySearch(emptyMovies, "Inception");
         assertTrue(actual.isEmpty(), "Searching in an empty list should return an empty list.");
     }
 
@@ -166,17 +168,17 @@ class MovieDisplayHelperTest {
     //test sorts observableMovies alphabetically ascending
     @Test
     void sort_movies_ascending_returns_sorted_list() {
-        List<Movie> unsorted = new ArrayList<>();
-        unsorted.add(new Movie("Titanic", "A love story set aboard the ill-fated RMS Titanic.",
+        List<Movie> unsortedmovies = new ArrayList<>();
+        unsortedmovies.add(new Movie("Titanic", "A love story set aboard the ill-fated RMS Titanic.",
                 List.of(Genre.ROMANCE, Genre.DRAMA, Genre.HISTORY)));
-        unsorted.add(new Movie("Inception", "A thief enters people's dreams to steal secrets.",
+        unsortedmovies.add(new Movie("Inception", "A thief enters people's dreams to steal secrets.",
                 List.of(Genre.ACTION, Genre.SCIENCE_FICTION, Genre.THRILLER)));
-        unsorted.add(new Movie("Forrest Gump", "The life story of a slow-witted but kind-hearted man.",
+        unsortedmovies.add(new Movie("Forrest Gump", "The life story of a slow-witted but kind-hearted man.",
                 List.of(Genre.DRAMA, Genre.ROMANCE, Genre.COMEDY)));
 
-        MovieDisplayHelper helper = new MovieDisplayHelper(unsorted);
-        helper.sortMoviesAscending();
-        List<Movie> sorted = helper.getObservableMovies();
+        ObservableList<Movie> unsortedObservableList = FXCollections.observableList(unsortedmovies);
+
+        List<Movie> sorted = MovieDisplayHelper.sortMoviesAscending(unsortedObservableList);
 
         // expected: "Forrest Gump", "Inception", "Titanic"
         assertEquals("Forrest Gump", sorted.get(0).getTitle(), "Expected first movie: 'Forrest Gump'");

@@ -2,7 +2,6 @@ package at.ac.fhcampuswien.fhmdb.helpers;
 
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
 import java.util.ArrayList;
@@ -11,32 +10,20 @@ import java.util.List;
 
 public class MovieDisplayHelper {
 
-    private ObservableList<Movie> observableMovies;
-
-    public MovieDisplayHelper(List<Movie> movies) {
-        this.observableMovies = FXCollections.observableArrayList(movies);
-    }
-
     // sorts observableMovies alphabetically ascending
-    public void sortMoviesAscending() {
-        FXCollections.sort(observableMovies, Comparator.comparing(Movie::getTitle));
+    public static List<Movie> sortMoviesAscending(ObservableList<Movie> observableMovies) {
+        List<Movie> sortedMovies = new ArrayList<>(observableMovies);
+        sortedMovies.sort(Comparator.comparing(Movie::getTitle));
+        return sortedMovies;
     }
 
-    public List<Movie> getObservableMovies() {
-        return observableMovies;
-    }
-
-    public static List<Movie> sort(List<Movie> observableMovies) {
-        return null;
-    }
-
-    //Filter the incoming List of Movies by the search query
-    public static List<Movie> filterSearch(List<Movie> moviesToFilter, String query) {
-        if (query == null || query.isBlank()) {     //empty or null queries return unmodified list
+    // Filter the incoming List of Movies by the search query
+    public static List<Movie> filterMoviesBySearch(List<Movie> moviesToFilter, String query) {
+        if (query == null || query.isBlank()) { // empty or null queries return unmodified list
             return new ArrayList<>(moviesToFilter);
         }
         List<Movie> filteredMovies = new ArrayList<Movie>();
-        String sanitizedQuery = query.toLowerCase().trim().replaceAll("\\s+", " ");     //repair search query
+        String sanitizedQuery = query.toLowerCase().trim().replaceAll("\\s+", " "); // repair search query
 
         for (Movie movie : moviesToFilter) {
             if (movie.getTitle().toLowerCase().contains(sanitizedQuery) || movie.getDescription().toLowerCase().contains(sanitizedQuery)) {
@@ -46,7 +33,6 @@ public class MovieDisplayHelper {
         return filteredMovies;
     }
 
-    // TODO Create Filter for Genre
     public static List<Movie> filterMoviesByGenre(List<Movie> moviesToFilter, Genre genre) {
         if (genre == null) {
             return moviesToFilter;
@@ -61,6 +47,9 @@ public class MovieDisplayHelper {
         return filteredMovies;
     }
 
+    public static List<Movie> filterMovies(List<Movie> moviesToFilter, String query, Genre genre) {
+        List<Movie> filteredMovies = filterMoviesByGenre(moviesToFilter, genre);
 
-    // TODO Create Method for Both Filters(?)
+        return filterMoviesBySearch(filteredMovies, query);
+    }
 }
