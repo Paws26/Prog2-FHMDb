@@ -49,15 +49,21 @@ public class HomeController implements Initializable {
         movieListView.setCellFactory(movieListView -> new MovieCell()); // use custom cell factory to display data
 
         genreComboBox.setPromptText("Filter by Genre");
-        genreComboBox.setPlaceholder(new javafx.scene.control.Label("Filter by Genre"));
+        genreComboBox.getItems().add(0, null);
         genreComboBox.getItems().addAll(FXCollections.observableArrayList(Genre.values()));
 
         sortBtn.setOnAction(actionEvent -> {
             if (isAscending) {
-                FXCollections.sort(observableMovies, Comparator.comparing(Movie::getTitle)); // Ascending sort
+                // Sort Movies alphabetically ascending
+                List<Movie> sortedMovies = MovieDisplayHelper.sortMoviesAscending(observableMovies);
+                observableMovies.clear();
+                observableMovies.addAll(sortedMovies);
                 sortBtn.setText("Sort (desc)");
             } else {
-                FXCollections.sort(observableMovies, Comparator.comparing(Movie::getTitle).reversed()); // Descending sort
+                // Sort Movies alphabetically descending
+                List<Movie> sortedMovies = MovieDisplayHelper.sortMoviesDescending(observableMovies);
+                observableMovies.clear();
+                observableMovies.addAll(sortedMovies);
                 sortBtn.setText("Sort (asc)");
             }
 

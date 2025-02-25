@@ -168,15 +168,19 @@ class MovieDisplayHelperTest {
     //test sorts observableMovies alphabetically ascending
     @Test
     void sort_movies_ascending_returns_sorted_list() {
-        List<Movie> unsortedmovies = new ArrayList<>();
-        unsortedmovies.add(new Movie("Titanic", "A love story set aboard the ill-fated RMS Titanic.",
+        List<Movie> unsorted = new ArrayList<>();
+        unsorted.add(new Movie("Titanic", "A love story set aboard the ill-fated RMS Titanic.",
                 List.of(Genre.ROMANCE, Genre.DRAMA, Genre.HISTORY)));
-        unsortedmovies.add(new Movie("Inception", "A thief enters people's dreams to steal secrets.",
+        unsorted.add(new Movie("Inception", "A thief enters people's dreams to steal secrets.",
                 List.of(Genre.ACTION, Genre.SCIENCE_FICTION, Genre.THRILLER)));
-        unsortedmovies.add(new Movie("Forrest Gump", "The life story of a slow-witted but kind-hearted man.",
+        unsorted.add(new Movie("Forrest Gump", "The life story of a slow-witted but kind-hearted man.",
                 List.of(Genre.DRAMA, Genre.ROMANCE, Genre.COMEDY)));
 
-        ObservableList<Movie> unsortedObservableList = FXCollections.observableList(unsortedmovies);
+//        MovieDisplayHelper helper = new MovieDisplayHelper(unsorted);
+//        helper.sortMoviesDescending();
+//        List<Movie> sorted = helper.getObservableMovies();
+
+        ObservableList<Movie> unsortedObservableList = FXCollections.observableList(unsorted);
 
         List<Movie> sorted = MovieDisplayHelper.sortMoviesAscending(unsortedObservableList);
 
@@ -199,9 +203,13 @@ class MovieDisplayHelperTest {
 
         List.of(Genre.DRAMA, Genre.ROMANCE, Genre.COMEDY);
 
-        MovieDisplayHelper helper = new MovieDisplayHelper(unsorted);
-        helper.sortMoviesDescending();
-        List<Movie> sorted = helper.getObservableMovies();
+//        MovieDisplayHelper helper = new MovieDisplayHelper(unsorted);
+//        helper.sortMoviesDescending();
+//        List<Movie> sorted = helper.getObservableMovies();
+
+        ObservableList<Movie> unsortedObservableList = FXCollections.observableList(unsorted);
+
+        List<Movie> sorted = MovieDisplayHelper.sortMoviesDescending(unsortedObservableList);
 
         assertEquals("Titanic", sorted.get(0).getTitle(), "Expected first movie: 'Titanic'");
         assertEquals("Inception", sorted.get(1).getTitle(), "Expected second movie: 'Inception'");

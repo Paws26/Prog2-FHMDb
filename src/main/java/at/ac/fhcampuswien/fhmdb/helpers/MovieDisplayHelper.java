@@ -11,27 +11,18 @@ import java.util.List;
 
 public class MovieDisplayHelper {
 
-    private ObservableList<Movie> observableMovies;
-
-    public MovieDisplayHelper(List<Movie> movies) {
-        this.observableMovies = FXCollections.observableArrayList(movies);
-    }
-
     // sorts observableMovies alphabetically ascending
-    public void sortMoviesAscending() {
-        FXCollections.sort(observableMovies, Comparator.comparing(Movie::getTitle));
+    public static List<Movie> sortMoviesAscending(ObservableList<Movie> observableMovies) {
+        List<Movie> sortedMovies = new ArrayList<>(observableMovies);
+        sortedMovies.sort(Comparator.comparing(Movie::getTitle));
+        return sortedMovies;
     }
 
-    public void sortMoviesDescending() {
-        FXCollections.sort(observableMovies, Comparator.comparing(Movie::getTitle).reversed());
-    }
-
-    public List<Movie> getObservableMovies() {
-        return observableMovies;
-    }
-
-    public static List<Movie> sort(List<Movie> observableMovies) {
-        return null;
+    // sorts observableMovies alphabetically descending
+    public static List<Movie> sortMoviesDescending(ObservableList<Movie> observableMovies) {
+        List<Movie> sortedMovies = new ArrayList<>(observableMovies);
+        sortedMovies.sort(Comparator.comparing(Movie::getTitle).reversed());
+        return sortedMovies;
     }
 
     // Filter the incoming List of Movies by the search query
@@ -50,6 +41,7 @@ public class MovieDisplayHelper {
         return filteredMovies;
     }
 
+    // Filter the incoming List of Movies by the genre
     public static List<Movie> filterMoviesByGenre(List<Movie> moviesToFilter, Genre genre) {
         if (genre == null) {
             return moviesToFilter;
@@ -64,6 +56,7 @@ public class MovieDisplayHelper {
         return filteredMovies;
     }
 
+    // Filter the incoming List of Movies
     public static List<Movie> filterMovies(List<Movie> moviesToFilter, String query, Genre genre) {
         List<Movie> filteredMovies = filterMoviesByGenre(moviesToFilter, genre);
 
