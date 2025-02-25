@@ -43,7 +43,7 @@ public class MovieDisplayHelper {
 
     // Filter the incoming List of Movies by the genre
     public static List<Movie> filterMoviesByGenre(List<Movie> moviesToFilter, Genre genre) {
-        if (genre == null) {
+        if (genre == Genre.NONE || genre == null) {
             return moviesToFilter;
         }
         List<Movie> filteredMovies = new ArrayList<>();

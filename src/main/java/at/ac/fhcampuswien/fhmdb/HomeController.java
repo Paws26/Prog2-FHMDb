@@ -49,8 +49,7 @@ public class HomeController implements Initializable {
         movieListView.setCellFactory(movieListView -> new MovieCell()); // use custom cell factory to display data
 
         genreComboBox.setPromptText("Filter by Genre");
-        genreComboBox.getItems().add(0, null);
-        genreComboBox.getItems().addAll(FXCollections.observableArrayList(Genre.values()));
+        genreComboBox.getItems().addAll(Genre.values());
 
         sortBtn.setOnAction(actionEvent -> {
             if (isAscending) {
