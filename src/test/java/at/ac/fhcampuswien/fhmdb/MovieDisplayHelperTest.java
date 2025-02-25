@@ -1,5 +1,6 @@
-package at.ac.fhcampuswien.fhmdb.helpers;
+package at.ac.fhcampuswien.fhmdb;
 
+import at.ac.fhcampuswien.fhmdb.helpers.MovieDisplayHelper;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import javafx.collections.FXCollections;
