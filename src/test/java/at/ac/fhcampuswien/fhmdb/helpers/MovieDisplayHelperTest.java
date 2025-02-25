@@ -215,4 +215,31 @@ class MovieDisplayHelperTest {
         assertEquals("Inception", sorted.get(1).getTitle(), "Expected second movie: 'Inception'");
         assertEquals("Forrest Gump", sorted.get(2).getTitle(), "Expected third movie: 'Forrest Gump'");
     }
+    @Test
+    void sort_movies_with_empty_list_returns_empty_list() {
+        List<Movie> emptyList = new ArrayList<>();
+        ObservableList<Movie> emptyObservableList = FXCollections.observableList(emptyList);
+
+        List<Movie> sortedAscending = MovieDisplayHelper.sortMoviesAscending(emptyObservableList);
+        List<Movie> sortedDescending = MovieDisplayHelper.sortMoviesDescending(emptyObservableList);
+
+        assertTrue(sortedAscending.isEmpty(), "Expected empty list when sorting ascending");
+        assertTrue(sortedDescending.isEmpty(), "Expected empty list when sorting descending");
+    }
+    @Test
+    void sort_movies_with_single_element_returns_same_list() {
+        List<Movie> singleMovieList = List.of(
+                new Movie("Interstellar", "A sci-fi adventure through space and time.",
+                        List.of(Genre.SCIENCE_FICTION, Genre.DRAMA))
+        );
+
+        ObservableList<Movie> singleObservableList = FXCollections.observableList(new ArrayList<>(singleMovieList));
+
+        List<Movie> sortedAscending = MovieDisplayHelper.sortMoviesAscending(singleObservableList);
+        List<Movie> sortedDescending = MovieDisplayHelper.sortMoviesDescending(singleObservableList);
+
+        assertEquals("Interstellar", sortedAscending.get(0).getTitle(), "Expected same movie when sorting ascending");
+        assertEquals("Interstellar", sortedDescending.get(0).getTitle(), "Expected same movie when sorting descending");
+    }
+
 }
