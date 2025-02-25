@@ -14,6 +14,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 
 import java.net.URL;
+import java.util.Comparator;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -37,6 +38,8 @@ public class HomeController implements Initializable {
 
     private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
 
+    private boolean isAscending = true; //track the current sorting order
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         observableMovies.addAll(allMovies);         // add dummy data to observable list
@@ -46,24 +49,19 @@ public class HomeController implements Initializable {
         movieListView.setCellFactory(movieListView -> new MovieCell()); // use custom cell factory to display data
 
         genreComboBox.setPromptText("Filter by Genre");
-        genreComboBox.getItems().add(0, null);
+        genreComboBox.setPlaceholder(new javafx.scene.control.Label("Filter by Genre"));
         genreComboBox.getItems().addAll(FXCollections.observableArrayList(Genre.values()));
 
-        // TODO add event handlers to buttons and call the regarding methods
-        // either set event handlers in the fxml file (onAction) or add them here
-
-        // Sort button example:
         sortBtn.setOnAction(actionEvent -> {
-            if(sortBtn.getText().equals("Sort (asc)")) {
-                List<Movie> sortedMovies = MovieDisplayHelper.sort(observableMovies);
-                observableMovies.clear();
-                observableMovies.addAll(sortedMovies);
-                // TODO sort observableMovies ascending
+            if (isAscending) {
+                FXCollections.sort(observableMovies, Comparator.comparing(Movie::getTitle)); // Ascending sort
                 sortBtn.setText("Sort (desc)");
             } else {
-                // TODO sort observableMovies descending
+                FXCollections.sort(observableMovies, Comparator.comparing(Movie::getTitle).reversed()); // Descending sort
                 sortBtn.setText("Sort (asc)");
             }
+
+            isAscending = !isAscending; // Toggle sorting order
         });
 
         searchBtn.setOnAction(actionEvent -> {
