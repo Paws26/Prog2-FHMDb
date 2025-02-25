@@ -184,7 +184,25 @@ class MovieDisplayHelperTest {
         assertEquals("Titanic", sorted.get(2).getTitle(), "Expected third movie: 'Titanic'");
     }
 
+    //test sorts observableMovies alphabetically descending
+    @Test
+    void sort_movies_descending_returns_sorted_list() {
+        List<Movie> unsorted = new ArrayList<>();
+        unsorted.add(new Movie("Titanic", "A love story set aboard the ill-fated RMS Titanic.",
+                List.of(Genre.ROMANCE, Genre.DRAMA, Genre.HISTORY)));
+        unsorted.add(new Movie("Inception", "A thief enters people's dreams to steal secrets.",
+                List.of(Genre.ACTION, Genre.SCIENCE_FICTION, Genre.THRILLER)));
+        unsorted.add(new Movie("Forrest Gump", "The life story of a slow-witted but kind-hearted man.",
+                List.of(Genre.DRAMA, Genre.ROMANCE, Genre.COMEDY)));
 
+        List.of(Genre.DRAMA, Genre.ROMANCE, Genre.COMEDY);
 
+        MovieDisplayHelper helper = new MovieDisplayHelper(unsorted);
+        helper.sortMoviesDescending();
+        List<Movie> sorted = helper.getObservableMovies();
 
+        assertEquals("Titanic", sorted.get(0).getTitle(), "Expected first movie: 'Titanic'");
+        assertEquals("Inception", sorted.get(1).getTitle(), "Expected second movie: 'Inception'");
+        assertEquals("Forrest Gump", sorted.get(2).getTitle(), "Expected third movie: 'Forrest Gump'");
+    }
 }

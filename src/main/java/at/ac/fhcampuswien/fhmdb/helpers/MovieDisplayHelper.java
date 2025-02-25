@@ -22,6 +22,10 @@ public class MovieDisplayHelper {
         FXCollections.sort(observableMovies, Comparator.comparing(Movie::getTitle));
     }
 
+    public void sortMoviesDescending() {
+        FXCollections.sort(observableMovies, Comparator.comparing(Movie::getTitle).reversed());
+    }
+
     public List<Movie> getObservableMovies() {
         return observableMovies;
     }
