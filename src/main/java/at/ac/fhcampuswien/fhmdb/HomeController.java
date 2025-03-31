@@ -16,7 +16,7 @@ import javafx.scene.control.TextField;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -36,7 +36,8 @@ public class HomeController implements Initializable {
     @FXML
     public JFXButton sortBtn;
 
-    public List<Movie> allMovies = Movie.initializeMovies();
+    public List<Movie> allMovies = new ArrayList<>() {
+    };
 
     private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
 
@@ -48,10 +49,10 @@ public class HomeController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         MovieAPI movieAPI = new MovieAPI();
 
-        //TODO: Remove debugging
         try {
-            String json = movieAPI.getMovies(initialUrl);
-            System.out.println(json);
+            String json = movieAPI.getMoviesJson(initialUrl);
+            allMovies = movieAPI.parseJsonMovies(json);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
