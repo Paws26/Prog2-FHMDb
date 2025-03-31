@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.fhmdb;
 
+import at.ac.fhcampuswien.fhmdb.api.MovieAPI;
 import at.ac.fhcampuswien.fhmdb.helpers.MovieDisplayHelper;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
@@ -13,8 +14,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TextField;
 
+import java.io.IOException;
 import java.net.URL;
-import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -40,8 +42,20 @@ public class HomeController implements Initializable {
 
     private boolean isAscending = true; //track the current sorting order
 
+    private String initialUrl = "https://prog2.fh-campuswien.ac.at/movies"; // Initial URL
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        MovieAPI movieAPI = new MovieAPI();
+
+        //TODO: Remove debugging
+        try {
+            String json = movieAPI.getMovies(initialUrl);
+            System.out.println(json);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         observableMovies.addAll(allMovies);         // add dummy data to observable list
 
         // initialize UI stuff
