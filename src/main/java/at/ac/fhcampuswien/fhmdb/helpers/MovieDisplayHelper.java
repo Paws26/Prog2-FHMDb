@@ -5,10 +5,7 @@ import at.ac.fhcampuswien.fhmdb.models.Movie;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class MovieDisplayHelper {
@@ -68,9 +65,8 @@ public class MovieDisplayHelper {
     // Return distinct years for filtered Movies
     public static Set<Integer> getFilteredReleaseYears(ObservableList<Movie> filteredMovies) {
         // Use a TreeSet to collect distinct years and keep them sorted
-//        return filteredMovies.stream()
-//                .map(Movie::getReleaseYear)
-//                .collect(Collectors.toCollection(TreeSet::new));
-        return null;
+        return filteredMovies.stream()
+                .map(Movie::getReleaseYear)
+                .collect(Collectors.toCollection(TreeSet::new));
     }
 }

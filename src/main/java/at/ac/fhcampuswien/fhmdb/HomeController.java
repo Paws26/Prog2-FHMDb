@@ -74,6 +74,8 @@ public class HomeController implements Initializable {
         genreComboBox.setPromptText("Filter by Genre");
         genreComboBox.getItems().addAll(Genre.values());
 
+        yearComboBox.setItems(FXCollections.observableArrayList(MovieDisplayHelper.getFilteredReleaseYears(observableMovies)));
+
         SpinnerValueFactory<Double> ratingValueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0, 10.0, 0.0, 0.1);
         ratingSpinner.setValueFactory(ratingValueFactory);
         ((TextField) ratingSpinner.getEditor()).setText("");
@@ -103,13 +105,13 @@ public class HomeController implements Initializable {
         searchBtn.setOnAction(actionEvent -> {
             String query = searchField.getText(); // Get search query from searchField
             Genre genre = (Genre) genreComboBox.getValue(); // Get genre from genreComboBox
-            int releaseYear = yearComboBox.getValue(); // Get release year from yearComboBox
-            double rating = ratingSpinner.getValue(); // Get rating from ratingSpinner
+            Integer releaseYear = yearComboBox.getValue(); // Get release year from yearComboBox
+            Double rating = ratingSpinner.getValue(); // Get rating from ratingSpinner
 
             List<Movie> filteredMovies = MovieDisplayHelper.filterMovies(allMovies, query, genre);
 
             observableMovies.setAll(filteredMovies);
-            // yearComboBox.setItems(FXCollections.observableArrayList(MovieDisplayHelper.getFilteredReleaseYears(observableMovies))); // Update Release Year ComboBox with filtered years
+            yearComboBox.setItems(FXCollections.observableArrayList(MovieDisplayHelper.getFilteredReleaseYears(observableMovies))); // Update Release Year ComboBox with filtered years
         });
 
         // Rating Spinner
