@@ -25,48 +25,53 @@ public class MovieDisplayHelper {
     }
 
     // Filter the incoming List of Movies by the search query
-    public static List<Movie> filterMoviesBySearch(List<Movie> moviesToFilter, String query) {
-        if (query == null || query.isBlank()) { // empty or null queries return unmodified list
-            return new ArrayList<>(moviesToFilter);
-        }
-        List<Movie> filteredMovies = new ArrayList<Movie>();
-        String sanitizedQuery = query.toLowerCase().trim().replaceAll("\\s+", " "); // repair search query
-
-        for (Movie movie : moviesToFilter) {
-            if (movie.getTitle().toLowerCase().contains(sanitizedQuery) || movie.getDescription().toLowerCase().contains(sanitizedQuery)) {
-                filteredMovies.add(movie);
-            }
-        }
-        return filteredMovies;
-    }
+//    public static List<Movie> filterMoviesBySearch(List<Movie> moviesToFilter, String query) {
+//        if (query == null || query.isBlank()) { // empty or null queries return unmodified list
+//            return new ArrayList<>(moviesToFilter);
+//        }
+//        List<Movie> filteredMovies = new ArrayList<Movie>();
+//        String sanitizedQuery = query.toLowerCase().trim().replaceAll("\\s+", " "); // repair search query
+//
+//        for (Movie movie : moviesToFilter) {
+//            if (movie.getTitle().toLowerCase().contains(sanitizedQuery) || movie.getDescription().toLowerCase().contains(sanitizedQuery)) {
+//                filteredMovies.add(movie);
+//            }
+//        }
+//        return filteredMovies;
+//    }
 
     // Filter the incoming List of Movies by the genre
-    public static List<Movie> filterMoviesByGenre(List<Movie> moviesToFilter, Genre genre) {
-        if (genre == Genre.NONE || genre == null) {
-            return moviesToFilter;
-        }
-        List<Movie> filteredMovies = new ArrayList<>();
-
-        for (Movie movie : moviesToFilter) {
-            if (movie.getGenres().contains(genre)) {
-                filteredMovies.add(movie);
-            }
-        }
-        return filteredMovies;
-    }
+//    public static List<Movie> filterMoviesByGenre(List<Movie> moviesToFilter, Genre genre) {
+//        if (genre == Genre.NONE || genre == null) {
+//            return moviesToFilter;
+//        }
+//        List<Movie> filteredMovies = new ArrayList<>();
+//
+//        for (Movie movie : moviesToFilter) {
+//            if (movie.getGenres().contains(genre)) {
+//                filteredMovies.add(movie);
+//            }
+//        }
+//        return filteredMovies;
+//    }
 
     // Filter the incoming List of Movies
-    public static List<Movie> filterMovies(List<Movie> moviesToFilter, String query, Genre genre) {
-        List<Movie> filteredMovies = filterMoviesByGenre(moviesToFilter, genre);
-
-        return filterMoviesBySearch(filteredMovies, query);
-    }
+//    public static List<Movie> filterMovies(List<Movie> moviesToFilter, String query, Genre genre) {
+//        List<Movie> filteredMovies = filterMoviesByGenre(moviesToFilter, genre);
+//
+//        return filterMoviesBySearch(filteredMovies, query);
+//    }
 
     // Return distinct years for filtered Movies
-    public static Set<Integer> getFilteredReleaseYears(ObservableList<Movie> filteredMovies) {
-        // Use a TreeSet to collect distinct years and keep them sorted
-        return filteredMovies.stream()
+    public static List<Integer> getFilteredReleaseYears(ObservableList<Movie> filteredMovies) {
+        // Collect distinct years and sort them using the TreeSet Set type
+        Set<Integer> distinctyears = filteredMovies.stream()
                 .map(Movie::getReleaseYear)
                 .collect(Collectors.toCollection(TreeSet::new));
+
+        List<Integer> filteredYears = new ArrayList<>(distinctyears);
+        filteredYears.sort(Comparator.reverseOrder());
+
+        return filteredYears;
     }
 }

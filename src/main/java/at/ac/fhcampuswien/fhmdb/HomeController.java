@@ -15,6 +15,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
+import javafx.util.StringConverter;
 
 import java.io.IOException;
 import java.net.URL;
@@ -51,6 +52,8 @@ public class HomeController implements Initializable {
 
     private boolean isAscending = true; //track the current sorting order
 
+    public static final int NO_YEAR_FILTER = -1;
+
     private String initialUrl = "https://prog2.fh-campuswien.ac.at/movies"; // Initial URL
 
     @Override
@@ -74,7 +77,10 @@ public class HomeController implements Initializable {
         genreComboBox.setPromptText("Filter by Genre");
         genreComboBox.getItems().addAll(Genre.values());
 
-        yearComboBox.setItems(FXCollections.observableArrayList(MovieDisplayHelper.getFilteredReleaseYears(observableMovies)));
+        updateYearComboBox();
+
+        // Select the first Option (Any Year)
+        yearComboBox.getSelectionModel().selectFirst();
 
         SpinnerValueFactory<Double> ratingValueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0, 10.0, 0.0, 0.1);
         ratingSpinner.setValueFactory(ratingValueFactory);
@@ -108,10 +114,18 @@ public class HomeController implements Initializable {
             Integer releaseYear = yearComboBox.getValue(); // Get release year from yearComboBox
             Double rating = ratingSpinner.getValue(); // Get rating from ratingSpinner
 
-            List<Movie> filteredMovies = MovieDisplayHelper.filterMovies(allMovies, query, genre);
+            // Build API Url using queried values
+            String queriedUrl = movieAPI.buildApiURL(initialUrl, query, genre, releaseYear, rating);
 
-            observableMovies.setAll(filteredMovies);
-            yearComboBox.setItems(FXCollections.observableArrayList(MovieDisplayHelper.getFilteredReleaseYears(observableMovies))); // Update Release Year ComboBox with filtered years
+            try {
+                // Get filtered Movies from API response
+                List<Movie> filteredMovies = movieAPI.parseJsonMovies(movieAPI.getMoviesJson(queriedUrl));
+                observableMovies.setAll(filteredMovies);
+
+                updateYearComboBox();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
 
         // Rating Spinner
@@ -120,7 +134,33 @@ public class HomeController implements Initializable {
                 ratingSpinner.getValueFactory().setValue(oldValue);
             }
         });
+    }
 
+    private void updateYearComboBox() {
+        List<Integer> filteredYears = MovieDisplayHelper.getFilteredReleaseYears(observableMovies);
+        if (!filteredYears.contains(NO_YEAR_FILTER)) {
+            filteredYears.add(0, NO_YEAR_FILTER);  // Add NO_YEAR_FILTER = -1 at the beginning
+        }
+        yearComboBox.setItems(FXCollections.observableArrayList(filteredYears));
 
+        // Convert NO_YEAR_FILTER (-1) to display "Any Year" instead (I hate Integer and String incompatibility in Lists)
+        yearComboBox.setConverter(new StringConverter<Integer>() {
+            @Override
+            public String toString(Integer year) {
+                return (year == null || year == NO_YEAR_FILTER) ? "Any Year" : year.toString();
+            }
+
+            @Override
+            public Integer fromString(String string) {
+                if ("Any Year".equals(string)) {
+                    return NO_YEAR_FILTER;
+                }
+                try {
+                    return Integer.valueOf(string);
+                } catch (NumberFormatException e) {
+                    return NO_YEAR_FILTER;
+                }
+            }
+        });
     }
 }

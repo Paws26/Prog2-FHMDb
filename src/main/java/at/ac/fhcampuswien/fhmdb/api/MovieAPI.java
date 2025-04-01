@@ -1,9 +1,12 @@
 package at.ac.fhcampuswien.fhmdb.api;
 
+import at.ac.fhcampuswien.fhmdb.HomeController;
+import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -15,14 +18,34 @@ import java.util.List;
 public class MovieAPI {
     private final OkHttpClient client = new OkHttpClient();
 
+    // Build API Url String for movieAPI Request
+    public String buildApiURL(String initialUrl, String query, Genre genre, Integer year, Double rating) {
+        HttpUrl.Builder urlBuilder = HttpUrl.parse(initialUrl).newBuilder();
+
+        if (query != null && !query.trim().isEmpty()) {
+            urlBuilder.addQueryParameter("q", query);
+        }
+        if (genre != null && genre != Genre.NONE) {
+            urlBuilder.addQueryParameter("genre", genre.name());
+        }
+        if (year != HomeController.NO_YEAR_FILTER) {
+            urlBuilder.addQueryParameter("releaseYear", String.valueOf(year));
+        }
+        if (rating != null) {
+            urlBuilder.addQueryParameter("ratingFrom", String.valueOf(rating));
+        }
+
+        return urlBuilder.build().toString();
+    }
+
     public String getMoviesJson(String url) throws IOException {
-        Request request = new Request.Builder().url(url).header("User-Agent", "http.agent").build(); // URL Request an API
+        Request request = new Request.Builder().url(url).header("User-Agent", "http.agent").build(); // URL Request on API
 
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
                 throw new IOException("Unexpected code " + response);
             }
-            return response.body().string();  // JSON String
+            return response.body().string();  // return JSON String
         }
     }
 
