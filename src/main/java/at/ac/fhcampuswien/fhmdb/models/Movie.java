@@ -5,6 +5,15 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Movie {
+    private String id;
+    private int releaseYear;
+    private String imgUrl;
+    private int lengthInMinutes;
+    private List<String> directors;
+    private List<String> writers;
+    private List<String> mainCast;
+    private double rating;
+
     private String title;
     private String description;
     private List<Genre> genres;
@@ -26,6 +35,38 @@ public class Movie {
 
     public List<Genre> getGenres() {
         return List.copyOf(genres);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public int getReleaseYear() {
+        return releaseYear;
+    }
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public int getLengthInMinutes() {
+        return lengthInMinutes;
+    }
+
+    public List<String> getDirectors() {
+        return directors;
+    }
+
+    public List<String> getWriters() {
+        return writers;
+    }
+
+    public List<String> getMainCast() {
+        return mainCast;
+    }
+
+    public double getRating() {
+        return rating;
     }
 
     public static List<Movie> initializeMovies() {
