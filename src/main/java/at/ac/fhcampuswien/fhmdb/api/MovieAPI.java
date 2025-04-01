@@ -23,7 +23,7 @@ public class MovieAPI {
         HttpUrl.Builder urlBuilder = HttpUrl.parse(initialUrl).newBuilder();
 
         if (query != null && !query.trim().isEmpty()) {
-            urlBuilder.addQueryParameter("q", query);
+            urlBuilder.addQueryParameter("query", query);
         }
         if (genre != null && genre != Genre.NONE) {
             urlBuilder.addQueryParameter("genre", genre.name());
@@ -35,6 +35,7 @@ public class MovieAPI {
             urlBuilder.addQueryParameter("ratingFrom", String.valueOf(rating));
         }
 
+        System.out.println(urlBuilder.toString());
         return urlBuilder.build().toString();
     }
 
