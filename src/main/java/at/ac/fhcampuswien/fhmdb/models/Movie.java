@@ -25,6 +25,13 @@ public class Movie {
         this.genres = new ArrayList<>(genres);
     }
 
+    public Movie(String title, String description, List<Genre> genres, List<String> mainCast) {
+        this.title = title;
+        this.description = description;
+        this.genres = new ArrayList<>(genres);
+        this.mainCast = mainCast;
+    }
+
     public String getTitle() {
         return title;
     }

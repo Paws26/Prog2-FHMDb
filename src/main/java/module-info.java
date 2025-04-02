@@ -4,6 +4,7 @@ module at.ac.fhcampuswien.fhmdb {
     requires javafx.controls;
     requires okhttp3;
     requires com.google.gson;
+    requires surefire.shared.utils;
 
 
     opens at.ac.fhcampuswien.fhmdb to javafx.fxml;

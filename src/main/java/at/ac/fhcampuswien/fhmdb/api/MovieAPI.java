@@ -55,8 +55,7 @@ public class MovieAPI {
         List<Movie> movies = null;
 
         try {
-            // For lists, you need to tell Gson the specific generic type (List<Movie>)
-            // Use TypeToken for this
+            // For lists, we need to tell Gson the specific generic type (List<Movie>) - use TypeToken for this
             Type movieListType = new TypeToken<List<Movie>>(){}.getType();
 
             movies = gson.fromJson(jsonString, movieListType);
