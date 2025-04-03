@@ -61,18 +61,6 @@ public class MovieDisplayHelper {
                 //    Map.Entry::getKey is a method reference for entry -> entry.getKey()
                 .map(Map.Entry::getKey)
                 .orElse(null);
-
-//        Stream<String> actorsList = movies.stream().flatMap(movie -> movie.getMainCast().stream());
-//
-//        Map<String, Long> actorsCount = actorsList.collect(Collectors.groupingBy(actor -> actor, Collectors.counting()));
-//
-//        //TODO: remove (debug)
-//        actorsCount.forEach((actor, count) -> System.out.println(actor + ": " + count));
-//
-//        var actorResult = actorsCount.entrySet().stream()
-//                .max(Map.Entry.comparingByValue())
-//                .map(Map.Entry::getKey)
-//                .orElse(null);
 //
 //        return movies.stream()
 //                .flatMap(movie -> movie.getMainCast().stream()) // Extract and flatten actor lists
