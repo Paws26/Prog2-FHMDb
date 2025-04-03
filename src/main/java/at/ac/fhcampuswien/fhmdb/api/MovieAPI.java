@@ -25,7 +25,7 @@ public class MovieAPI {
         if (query != null && !query.trim().isEmpty()) {
             urlBuilder.addQueryParameter("query", query);
         }
-        if (genre != null && genre != Genre.NONE) {
+        if (genre != null && genre != Genre.ANY) {
             urlBuilder.addQueryParameter("genre", genre.name());
         }
         if (year != HomeController.NO_YEAR_FILTER) {
