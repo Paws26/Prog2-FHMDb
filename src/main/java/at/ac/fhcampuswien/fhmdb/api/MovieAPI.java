@@ -35,7 +35,7 @@ public class MovieAPI {
             urlBuilder.addQueryParameter("ratingFrom", String.valueOf(rating));
         }
 
-        System.out.println(urlBuilder.toString());
+        System.out.println(urlBuilder);
         return urlBuilder.build().toString();
     }
 

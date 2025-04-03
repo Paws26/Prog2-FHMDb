@@ -1,10 +1,12 @@
 package at.ac.fhcampuswien.fhmdb;
 
+import at.ac.fhcampuswien.fhmdb.api.MovieAPI;
 import at.ac.fhcampuswien.fhmdb.helpers.MovieDisplayHelper;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -25,10 +27,6 @@ public class MovieSortTest {
                 List.of(Genre.ACTION, Genre.SCIENCE_FICTION, Genre.THRILLER)));
         unsorted.add(new Movie("Forrest Gump", "The life story of a slow-witted but kind-hearted man.",
                 List.of(Genre.DRAMA, Genre.ROMANCE, Genre.COMEDY)));
-
-//        MovieDisplayHelper helper = new MovieDisplayHelper(unsorted);
-//        helper.sortMoviesDescending();
-//        List<Movie> sorted = helper.getObservableMovies();
 
         ObservableList<Movie> unsortedObservableList = FXCollections.observableList(unsorted);
 
@@ -52,10 +50,6 @@ public class MovieSortTest {
                 List.of(Genre.DRAMA, Genre.ROMANCE, Genre.COMEDY)));
 
         List.of(Genre.DRAMA, Genre.ROMANCE, Genre.COMEDY);
-
-//        MovieDisplayHelper helper = new MovieDisplayHelper(unsorted);
-//        helper.sortMoviesDescending();
-//        List<Movie> sorted = helper.getObservableMovies();
 
         ObservableList<Movie> unsortedObservableList = FXCollections.observableList(unsorted);
 

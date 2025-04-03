@@ -60,32 +60,32 @@ public class HomeController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         MovieAPI movieAPI = new MovieAPI();
 
+        // Get all movies from api and add them to ObservablesList observableMovies
         try {
             String json = movieAPI.getMoviesJson(initialUrl);
             allMovies = movieAPI.parseJsonMovies(json);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        observableMovies.addAll(allMovies);         // add dummy data to observable list
+        observableMovies.addAll(allMovies);
 
         // initialize UI stuff
         movieListView.setItems(observableMovies);   // set data of observable list to list view
         movieListView.setCellFactory(movieListView -> new MovieCell()); // use custom cell factory to display data
 
+        // Genre UI
         genreComboBox.setPromptText("Filter by Genre");
         genreComboBox.getItems().addAll(Genre.values());
 
+        // Release Year UI
         updateYearComboBox();
-
-        // Select the first Option (Any Year)
         yearComboBox.getSelectionModel().selectFirst();
 
+        // Rating UI
         SpinnerValueFactory<Double> ratingValueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0, 10.0, 0.0, 0.1);
         ratingSpinner.setValueFactory(ratingValueFactory);
-        ((TextField) ratingSpinner.getEditor()).setText("");
-        ((TextField) ratingSpinner.getEditor()).setPromptText("Rating");
+        ratingSpinner.getEditor().setText("");
+        ratingSpinner.getEditor().setPromptText("Rating");
 
 
         // Sorting Button
@@ -107,7 +107,7 @@ public class HomeController implements Initializable {
             isAscending = !isAscending; // Toggle sorting order
         });
 
-        // Filter Button
+        // Filter/Search Button
         searchBtn.setOnAction(actionEvent -> {
             String query = searchField.getText(); // Get search query from searchField
             Genre genre = (Genre) genreComboBox.getValue(); // Get genre from genreComboBox
@@ -118,9 +118,8 @@ public class HomeController implements Initializable {
             String queriedUrl = movieAPI.buildApiURL(initialUrl, query, genre, releaseYear, rating);
 
             try {
-                // Get filtered Movies from API response
-                List<Movie> filteredMovies = movieAPI.parseJsonMovies(movieAPI.getMoviesJson(queriedUrl));
-                observableMovies.setAll(filteredMovies);
+                // Update observable list with filtered Movies from API response
+                observableMovies.setAll(movieAPI.parseJsonMovies(movieAPI.getMoviesJson(queriedUrl)));
 
                 updateYearComboBox();
             } catch (Exception e) {
@@ -137,7 +136,7 @@ public class HomeController implements Initializable {
     }
 
     private void updateYearComboBox() {
-        List<Integer> filteredYears = MovieDisplayHelper.getFilteredReleaseYears(observableMovies);
+        List<Integer> filteredYears = MovieDisplayHelper.getDistinctReleaseYears(observableMovies);
         if (!filteredYears.contains(NO_YEAR_FILTER)) {
             filteredYears.add(0, NO_YEAR_FILTER);  // Add NO_YEAR_FILTER = -1 at the beginning
         }

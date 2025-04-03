@@ -2,14 +2,11 @@ package at.ac.fhcampuswien.fhmdb.helpers;
 
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import org.apache.maven.surefire.shared.lang3.stream.Streams;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class MovieDisplayHelper {
 
@@ -149,8 +146,8 @@ public class MovieDisplayHelper {
         return filterMoviesBySearch(filteredMovies, query);
     }
 
-    // Return distinct years for filtered Movies
-    public static List<Integer> getFilteredReleaseYears(ObservableList<Movie> filteredMovies) {
+    // Return distinct years for Movies
+    public static List<Integer> getDistinctReleaseYears(ObservableList<Movie> filteredMovies) {
         // Collect distinct years and sort them using the TreeSet Set type
         Set<Integer> distinctyears = filteredMovies.stream()
                 .map(Movie::getReleaseYear)
