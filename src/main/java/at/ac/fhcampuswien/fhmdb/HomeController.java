@@ -161,5 +161,9 @@ public class HomeController implements Initializable {
                 }
             }
         });
+
+        if (yearComboBox.getValue() == null) {
+            yearComboBox.setValue(NO_YEAR_FILTER);
+        }
     }
 }
