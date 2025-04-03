@@ -76,23 +76,94 @@ public class MovieStreamsTest {
         String title5 = "55555";
         String title6 = "666666";
 
-        movies.add(new Movie("title1", "Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION)));
-        movies.add(new Movie("title2", "Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION)));
-        movies.add(new Movie("title3", "Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION)));
-        movies.add(new Movie("title4", "Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION)));
-        movies.add(new Movie("title5", "Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION)));
-        movies.add(new Movie("title6", "Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION)));
+        movies.add(new Movie(title1, "Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION)));
+        movies.add(new Movie(title2, "Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION)));
+        movies.add(new Movie(title3, "Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION)));
+        movies.add(new Movie(title4, "Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION)));
+        movies.add(new Movie(title5, "Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION)));
+        movies.add(new Movie(title6, "Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION)));
 
-        int longestMovie =  MovieDisplayHelper.getLongestMovieTitle(movies);
+        int longestMovieLength =  MovieDisplayHelper.getLongestMovieTitle(movies);
 
-        assertEquals(title6.length(), longestMovie, "Expected longest movie length: " + title6.length());
+        assertEquals(title6.length(), longestMovieLength, "Expected longest movie length: " + title6.length());
     }
 
-    //TODO: longest movie title with list being null
+    @Test
+    void get_longest_movie_title_returns_zero_when_list_is_null(){
+        movies =  null;
 
-    //TODO: longest movie title with list not in ascending order of title-length
+        int longestMovieLength =  MovieDisplayHelper.getLongestMovieTitle(movies);
+        assertEquals(0, longestMovieLength, "Expected zero movie length: 0");
+    }
 
-    //TODO: longest movie title with list containing null movies
+    @Test
+    void get_longest_title_returns_length_of_longest_movie_title_from_unordered_list(){
+        movies = new ArrayList<>();
+        String title1 = "1";
+        String title2 = "22";
+        String title3 = "333";
+        String title4 = "4444";
+        String title5 = "55555";
+        String title6 = "666666";
 
-    //TODO: longest movie title with list containing movies with null titles
+        movies.add(new Movie(title1, "Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION)));
+        movies.add(new Movie(title6, "Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION)));
+        movies.add(new Movie(title2, "Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION)));
+        movies.add(new Movie(title3, "Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION)));
+        movies.add(new Movie(title4, "Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION)));
+        movies.add(new Movie(title5, "Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION)));
+
+        int longestMovieLength =  MovieDisplayHelper.getLongestMovieTitle(movies);
+
+        assertEquals(title6.length(), longestMovieLength, "Expected longest movie length: " + title6.length());
+    }
+
+    @Test
+    void get_longest_title_returns_zero_when_movies_are_null(){
+        movies = new ArrayList<>();
+
+
+        movies.add(null);
+        movies.add(null);
+        movies.add(null);
+        movies.add(null);
+        movies.add(null);
+        movies.add(null);
+
+        int longestMovieLength =  MovieDisplayHelper.getLongestMovieTitle(movies);
+
+        assertEquals(0, longestMovieLength, "Expected longest movie length: " + 0);
+    }
+
+    @Test
+    void get_longest_title_returns_longest_movie_title_length_when_some_movies_are_null(){
+        movies = new ArrayList<>();
+
+        String title1 = "Movie I guess";
+        String title2 = "Another one";
+        movies.add(null);
+        movies.add(new Movie(title1,"Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION)));
+        movies.add(new Movie(title2, "Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION)));
+        movies.add(null);
+        movies.add(null);
+
+        int longestMovieLength =  MovieDisplayHelper.getLongestMovieTitle(movies);
+        assertEquals(title1.length(), longestMovieLength, "Expected longest movie length: " + title1.length());
+    }
+
+    @Test
+    void get_longest_title_returns_longest_movie_title_length_when_some_movie_titles_are_null(){
+        movies = new ArrayList<>();
+        String title1 = null;
+        String title2 = "Movie I guess";
+        String title3 = null;
+
+        movies.add(new Movie(title1,"Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION)));
+        movies.add(new Movie(title2,"Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION)));
+        movies.add(new Movie(title3,"Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION)));
+
+        int longestMovieLength =  MovieDisplayHelper.getLongestMovieTitle(movies);
+        assertEquals(title2.length(), longestMovieLength, "Expected longest movie length: " + title2.length());
+    }
+
 }

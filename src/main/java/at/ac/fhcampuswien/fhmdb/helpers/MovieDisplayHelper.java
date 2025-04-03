@@ -31,7 +31,7 @@ public class MovieDisplayHelper {
         }
 
         // Stream pipeline:
-        Optional<String> mostPopularActor = movies.stream() // 1. Start with a Stream<Movie>
+        return movies.stream() // 1. Start with a Stream<Movie>
                 // Optional: Filter out null movies if they might exist in the list
                 .filter(Objects::nonNull)
                 // 2. Get the list of actors for each movie -> Stream<List<String>>
@@ -59,10 +59,8 @@ public class MovieDisplayHelper {
                 .max(Map.Entry.comparingByValue()) // Result: Optional<Map.Entry<String, Long>>
                 // 8. If an entry was found, get its key (the actor name)
                 //    Map.Entry::getKey is a method reference for entry -> entry.getKey()
-                .map(Map.Entry::getKey); // Result: Optional<String>
-
-        // 9. Return the actor name from the Optional, or null if the Optional is empty
-        return mostPopularActor.orElse(null);
+                .map(Map.Entry::getKey)
+                .orElse(null);
 
 //        Stream<String> actorsList = movies.stream().flatMap(movie -> movie.getMainCast().stream());
 //
@@ -90,7 +88,6 @@ public class MovieDisplayHelper {
         if (movies == null || movies.isEmpty()) {
             return 0;
         }
-        System.out.println(movies.stream().map(movie -> movie.getTitle().length()).max(Integer::compareTo).get());
 
         //TODO: remove (first approach - can't handle nulls ... kept around so far to have something simpler to compare to)
 //        return movies.stream()
@@ -100,12 +97,33 @@ public class MovieDisplayHelper {
 
         // 2. Use a stream to find the max title length.
         return movies.stream()                       // Stream<Movie>
-                .filter(Objects::nonNull)           // Filter out null movies (safer) -> Stream<Movie>
+                .filter(Objects::nonNull)           // Filter out null movies -> Stream<Movie>
                 .map(Movie::getTitle)               // Get titles -> Stream<String>
                 .filter(Objects::nonNull)           // Filter out null titles (safer) -> Stream<String>
                 .mapToInt(String::length)           // Convert to lengths -> IntStream
                 .max()                              // Find the maximum value -> OptionalInt
                 .orElse(0);
+    }
+
+//    gibt die Anzahl der Filme eines bestimmten Regisseurs zurück.
+    public static long countMoviesFrom(List<Movie> movies, String director) {
+
+        return movies.stream() // 1. Create a stream from the list of movies
+                .filter(Objects::nonNull) // 2. Filter out any null Movie objects in the list
+                .filter(movie -> { // 3. Filter movies based on the director
+                    List<String> movieDirectors = movie.getDirectors();
+                    // Check if the movie's director list is not null AND contains the target director
+                    return movieDirectors != null && movieDirectors.contains(director);
+                })
+                .count(); // 4. Count the number of movies remaining in the stream
+    }
+
+    //gibt jene Filme zurück, die zwischen zwei gegebenen Jahren veröffentlicht wurden
+    public static List<Movie> getMoviesBetweenYears(List<Movie> movies, int startYear, int endYear){
+        return movies.stream()
+                .filter(Objects::nonNull)
+                .filter(movie -> movie.getReleaseYear() > startYear && movie.getReleaseYear() < endYear)
+                .collect(Collectors.toList());
     }
 
     // Filter the incoming List of Movies by the search query
