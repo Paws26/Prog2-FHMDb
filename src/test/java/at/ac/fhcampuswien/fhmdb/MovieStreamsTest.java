@@ -58,13 +58,106 @@ public class MovieStreamsTest {
         assertEquals(actor4, mostCommonActor, "Expected actor: " + actor4);
     }
 
-    //TODO: most popular actor with list being null
+    @Test
+    void most_popular_actor_returns_null_if_no_actors_are_found() {
+        movies = new ArrayList<>();
+        movies.add(new Movie("Movie with actors 1", "Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION)));
+        movies.add(new Movie("Movie with actors 1, 2", "Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION)));
+        movies.add(new Movie("Movie with actors 1, 2, 3", "Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION)));
+        movies.add(new Movie("Movie with actors 1, 4", "Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION)));
+        movies.add(new Movie("Movie with actors 2, 3, 4", "Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION)));
 
-    //TODO: most popular actor with list containing null movies
+        String mostCommonActor = MovieDisplayHelper.getMostPopularActor(movies);
 
-    //TODO: most popular actor with list actors-list being null
+        assertEquals(null, mostCommonActor, "Expected null");
+    }
 
-    //TODO: most popular actor with list containing nulls in actors-list
+    @Test
+    void most_popular_actor_returns_null_if_list_is_empty() {
+        movies = null;
+
+        String mostCommonActor = MovieDisplayHelper.getMostPopularActor(movies);
+
+        assertEquals(null, mostCommonActor, "Expected null");
+    }
+
+    @Test
+    void most_popular_actor_returns_null_if_list_contains_null_movies() {
+        movies = new ArrayList<>();
+
+        movies.add(null);
+        movies.add(null);
+        movies.add(null);
+
+        String mostCommonActor = MovieDisplayHelper.getMostPopularActor(movies);
+
+        assertEquals(null, mostCommonActor, "Expected null");
+    }
+
+    @Test
+    void most_popular_actor_returns_null_if_actor_list_is_null() {
+        movies = new ArrayList<>();
+        movies.add(new Movie("Movie with actors null", "Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION), null));
+        movies.add(new Movie("Movie with actors null", "Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION), null));
+        movies.add(new Movie("Movie with actors null", "Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION), null));
+
+        String mostCommonActor = MovieDisplayHelper.getMostPopularActor(movies);
+
+        assertEquals(null, mostCommonActor, "Expected null");
+    }
+
+    @Test
+    void most_popular_actor_returns_null_if_actor_list_contains_null_actors() {
+        movies = new ArrayList<>();
+
+        List<String> actorslist1 = new ArrayList<>();
+        actorslist1.add(null);
+        List<String> actorslist2 = new ArrayList<>();
+        actorslist2.add(null);
+        actorslist2.add(null);
+        List<String> actorslist3 = new ArrayList<>();
+        actorslist3.add(null);
+        actorslist3.add(null);
+        actorslist3.add(null);
+
+        movies.add(new Movie("Movie with actors null", "Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION), actorslist1));
+        movies.add(new Movie("Movie with actors null, null", "Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION), actorslist2));
+        movies.add(new Movie("Movie with actors null, null, null", "Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION), actorslist3));
+
+        String mostCommonActor = MovieDisplayHelper.getMostPopularActor(movies);
+
+        assertEquals(null, mostCommonActor, "Expected null");
+    }
+
+    @Test
+    void most_popular_actor_returns_actor2_if_actor_list_contains_some_null_actors() {
+        movies = new ArrayList<>();
+
+        String actor1 = "Bad Pritt";
+        String actor2 = "Bat Man";
+        String actor3 = "Weird Al Yankovic";
+
+        List<String> actorslist1 = new ArrayList<>();
+        actorslist1.add(null);
+        List<String> actorslist2 = new ArrayList<>();
+        actorslist2.add(actor1);
+        actorslist2.add(actor2);
+        actorslist2.add(null);
+        List<String> actorslist3 = new ArrayList<>();
+        actorslist3.add(null);
+        actorslist3.add(actor2);
+        actorslist3.add(actor3);
+
+        movies.add(new Movie("Movie with actors null", "Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION), actorslist1));
+        movies.add(new Movie("Movie with actors actor1, actor2, null", "Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION), actorslist2));
+        movies.add(new Movie("Movie with actors null, actor2, actor3", "Description", List.of(Genre.ACTION, Genre.SCIENCE_FICTION), actorslist3));
+
+        String mostCommonActor = MovieDisplayHelper.getMostPopularActor(movies);
+
+        assertEquals(actor2, mostCommonActor, "Expected actor: "+ actor2);
+    }
+
+    // ----
 
     @Test
     void get_longest_title_returns_length_of_longest_movie_title(){
