@@ -1,6 +1,6 @@
 package at.ac.fhcampuswien.fhmdb;
-
 import at.ac.fhcampuswien.fhmdb.api.MovieAPI;
+import at.ac.fhcampuswien.fhmdb.api.MovieRepo;
 import at.ac.fhcampuswien.fhmdb.helpers.MovieDisplayHelper;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
@@ -16,12 +16,11 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
 import javafx.util.StringConverter;
-
-import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+
+
 
 public class HomeController implements Initializable {
     @FXML
@@ -45,29 +44,24 @@ public class HomeController implements Initializable {
     @FXML
     public JFXButton sortBtn;
 
-    public List<Movie> allMovies = new ArrayList<>() {
-    };
-
-    private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
+    // automatically updates corresponding UI elements when underlying data changes
+    private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();
 
     private boolean isAscending = true; //track the current sorting order
 
     public static final int NO_YEAR_FILTER = -1;
 
+    //TODO: remove fromo here, should not be here
     private String initialUrl = "https://prog2.fh-campuswien.ac.at/movies"; // Initial URL
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        MovieAPI movieAPI = new MovieAPI();
 
-        // Get all movies from api and add them to ObservablesList observableMovies
-        try {
-            String json = movieAPI.getMoviesJson(initialUrl);
-            allMovies = movieAPI.parseJsonMovies(json);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        observableMovies.addAll(allMovies);
+        MovieAPI movieAPI = new MovieAPI(); //TODO: REMOVE HERE SHOULD NOT BE HERE
+
+        MovieRepo movieRepo = new MovieRepo();
+        observableMovies.addAll(movieRepo.getMovies());
 
         // initialize UI stuff
         movieListView.setItems(observableMovies);   // set data of observable list to list view
@@ -133,8 +127,9 @@ public class HomeController implements Initializable {
                 ratingSpinner.getValueFactory().setValue(oldValue);
             }
         });
-    }
+    };
 
+    //update combo year box
     private void updateYearComboBox() {
         List<Integer> filteredYears = MovieDisplayHelper.getDistinctReleaseYears(observableMovies);
         if (!filteredYears.contains(NO_YEAR_FILTER)) {
@@ -165,5 +160,5 @@ public class HomeController implements Initializable {
         if (yearComboBox.getValue() == null) {
             yearComboBox.setValue(NO_YEAR_FILTER);
         }
-    }
+    };
 }

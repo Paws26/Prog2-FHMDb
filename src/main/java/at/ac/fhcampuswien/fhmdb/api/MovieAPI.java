@@ -1,78 +1,99 @@
 package at.ac.fhcampuswien.fhmdb.api;
-
 import at.ac.fhcampuswien.fhmdb.HomeController;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
-import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.List;
 
+
+
+//Movie api to fetch data from url
 public class MovieAPI {
+
+    private final String endpointUrl = "https://prog2.fh-campuswien.ac.at/movies"; // Initial URL
+
     private final OkHttpClient client = new OkHttpClient();
 
+    //TODO: rename to fetch movie
     // Build API Url String for movieAPI Request
-    public String buildApiURL(String initialUrl, String query, Genre genre, Integer year, Double rating) {
-        HttpUrl.Builder urlBuilder = HttpUrl.parse(initialUrl).newBuilder();
+    public String buildApiURL(
+            //TODO: remove later, will be final here
+            String url,
+            //TODO: remove later, wont be used anymore
+            String query,
+            Genre genre,
+            Integer year,
+            Double rating
+   )  {
+        try {
+            String json = getMoviesJson(endpointUrl);
+            List<Movie> movies = parseJsonMovies(json);
+            return json;
+        }
+        catch (IOException e) { System.out.println(e.getMessage()); }
 
-        if (query != null && !query.trim().isEmpty()) {
-            urlBuilder.addQueryParameter("query", query);
+        //for now return url
+        return url;
+    };
+    /******************************************************************************************************************/
+    //use this instead
+    public List<Movie>  fetMovieList() {
+        List<Movie> movies = new ArrayList<>();
+        try {
+            String json = getMoviesFromJSON();
+            List<Movie> parsed = parseJsonMovies(json); //parse into movie list
+            if(parsed != null) movies = parsed;
         }
-        if (genre != null && genre != Genre.ANY) {
-            urlBuilder.addQueryParameter("genre", genre.name());
+        catch (IOException e) { System.out.println(e.getMessage()); }
+        return movies;
+    };
+    /******************************************************************************************************************/
+    //return movies form json
+    public String getMoviesFromJSON() throws IOException {
+        Request request = new Request.Builder().url(endpointUrl).header("User-Agent", "http.agent").build();
+        try (Response res = client.newCall(request).execute()) {
+            if (!res.isSuccessful()) {
+                throw new IOException("Unexpected code " + res);
+            }
+            return res.body() != null ?
+                    res.body().string() : null;  // return JSON String
         }
-        if (year != HomeController.NO_YEAR_FILTER) {
-            urlBuilder.addQueryParameter("releaseYear", String.valueOf(year));
+    };
+    /******************************************************************************************************************/
+    //parse json movies
+    public List<Movie> parseJsonMovies(String jsonString) {
+        Gson gson = new Gson();
+        List<Movie> movies = null;
+        try {
+            // For lists, we need to tell Gson the specific generic type (List<Movie>) - use TypeToken for this
+            Type movieListType = new TypeToken<List<Movie>>(){}.getType();
+            movies = gson.fromJson(jsonString, movieListType);
+        } catch (JsonSyntaxException e) {
+            System.err.println("Error parsing JSON array: " + e.getMessage());
         }
-        if (rating != null) {
-            urlBuilder.addQueryParameter("ratingFrom", String.valueOf(rating));
-        }
+        return movies; // Return the list (or null if error)
+    };
 
-        System.out.println(urlBuilder);
-        return urlBuilder.build().toString();
-    }
 
+
+    //TODO: remove later
     public String getMoviesJson(String url) throws IOException {
         Request request = new Request.Builder().url(url).header("User-Agent", "http.agent").build(); // URL Request on API
-
         try (Response response = client.newCall(request).execute()) {
             if (!response.isSuccessful()) {
                 throw new IOException("Unexpected code " + response);
             }
             return response.body().string();  // return JSON String
         }
-    }
+    };
 
-    public List<Movie> parseJsonMovies(String jsonString) {
-        Gson gson = new Gson();
-        List<Movie> movies = null;
 
-        try {
-            // For lists, we need to tell Gson the specific generic type (List<Movie>) - use TypeToken for this
-            Type movieListType = new TypeToken<List<Movie>>(){}.getType();
-
-            movies = gson.fromJson(jsonString, movieListType);
-
-            if (movies != null) {
-                //TODO: remove (debug)
-                System.out.println("Successfully parsed " + movies.size() + " movies.");
-                // You can loop through them
-                // for(Movie movie : movies) {
-                //    System.out.println("- " + movie.getTitle());
-                // }
-            }
-        } catch (JsonSyntaxException e) {
-            //TODO: UI Ausgabe?
-            System.err.println("Error parsing JSON array: " + e.getMessage());
-            e.printStackTrace();
-        }
-        return movies; // Return the list (or null if error)
-    }
 }
