@@ -32,13 +32,6 @@ public class Movie {
         this.mainCast = mainCast;
     }
 
-    //TODO: remove
-    public boolean containsDirector(Movie movie, String director) {
-        List<String> movieDirectors = movie.getDirectors();
-        // Check if the movie's director list is not null AND contains the target director
-        return movieDirectors != null && movieDirectors.contains(director);
-    }
-
     public String getTitle() {
         return title;
     }
