@@ -15,12 +15,15 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.util.StringConverter;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class HomeController implements Initializable {
@@ -45,6 +48,12 @@ public class HomeController implements Initializable {
     @FXML
     public JFXButton sortBtn;
 
+    @FXML
+    public JFXButton menuBtn;
+
+    @FXML
+    private ImageView menuIcon;
+
     public List<Movie> allMovies = new ArrayList<>() {
     };
 
@@ -55,6 +64,8 @@ public class HomeController implements Initializable {
     public static final int NO_YEAR_FILTER = -1;
 
     private String initialUrl = "https://prog2.fh-campuswien.ac.at/movies"; // Initial URL
+    private Image hamburgerIcon;
+    private Image closeIcon;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -72,6 +83,23 @@ public class HomeController implements Initializable {
         // initialize UI stuff
         movieListView.setItems(observableMovies);   // set data of observable list to list view
         movieListView.setCellFactory(movieListView -> new MovieCell()); // use custom cell factory to display data
+
+        menuBtn.setText("");
+        hamburgerIcon = new Image(
+                getClass().getResource("/Icons/hamburger-menu.png")
+                        .toExternalForm()
+        );
+        closeIcon = new Image(
+                getClass().getResource("/Icons/close-menu.png")
+                        .toExternalForm()
+        );
+
+        menuIcon.setImage(hamburgerIcon);
+
+        menuBtn.setOnAction(event -> {
+
+            menuIcon.setImage(closeIcon);
+        });
 
         // Genre UI
         genreComboBox.setPromptText("Filter by Genre");
