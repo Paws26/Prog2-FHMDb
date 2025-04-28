@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXButton?>
+<?import com.jfoenix.controls.JFXListView?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<?import javafx.scene.layout.BorderPane?>
+
+<BorderPane fx:id="borderPane" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="at.ac.fhcampuswien.fhmdb.WatchlistController"
+            prefWidth="1280" prefHeight="800">
+
+    <!-- top: logo + welcome + filter bar -->
+    <top>
+        <VBox>
+            <!-- welcome + menu -->
+            <HBox spacing="20" style="-fx-background-color: black; -fx-padding: 7 10;"
+                  alignment="CENTER_LEFT">
+                <Label text="FHMDb" style="-fx-background-color: #F5C518; -fx-padding: 0 2;"/>
+                <Label text="Your Watchlist" styleClass="text-white" stylesheets="@styles.css"/>
+                <Region HBox.hgrow="ALWAYS"/>
+                <JFXButton fx:id="menuBtn" styleClass="text-white" stylesheets="@styles.css">
+                    <graphic>
+                        <ImageView fx:id="menuIcon" fitWidth="32" fitHeight="32"/>
+                    </graphic>
+                </JFXButton>
+            </HBox>
+        </VBox>
+    </top>
+
+    <!-- right: menu sidebar (hidden) -->
+    <right>
+        <VBox fx:id="sidebar" spacing="10"
+              style="-fx-background-color: #FFFFFF; -fx-padding: 20;"
+              visible="false" prefWidth="200" managed="false">
+            <JFXButton text="Home" textFill="black" onAction="#goHome" maxWidth="Infinity"/>
+            <JFXButton text="Watchlist" textFill="black" onAction="#goWatchlist" maxWidth="Infinity"/>
+            <JFXButton text="About" textFill="black" onAction="#goAbout" maxWidth="Infinity"/>
+        </VBox>
+    </right>
+
+    <!-- center: main content list -->
+    <center>
+        <JFXListView fx:id="movieListView" styleClass="background-black" stylesheets="@styles.css" VBox.vgrow="ALWAYS"/>
+    </center>
+</BorderPane>

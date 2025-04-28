@@ -10,19 +10,35 @@ import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXListView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
+
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 
 
 public class HomeController implements Initializable {
+    @FXML
+    private BorderPane borderPane;
+
     @FXML
     public JFXButton searchBtn;
 
@@ -46,6 +62,19 @@ public class HomeController implements Initializable {
 
     // automatically updates corresponding UI elements when underlying data changes
     private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();
+    @FXML
+    public JFXButton menuBtn;
+
+    @FXML
+    private ImageView menuIcon;
+
+    @FXML
+    private VBox sidebar;
+
+//    public List<Movie> allMovies = new ArrayList<>() {
+//    };
+
+    //private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
 
     private boolean isAscending = true; //track the current sorting order
 
@@ -53,36 +82,78 @@ public class HomeController implements Initializable {
 
     //TODO: remove fromo here, should not be here
     private String initialUrl = "https://prog2.fh-campuswien.ac.at/movies"; // Initial URL
+    private Image hamburgerIcon;
+    private Image closeIcon;
 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        MovieAPI movieAPI = new MovieAPI();
 
-        MovieAPI movieAPI = new MovieAPI(); //TODO: REMOVE HERE SHOULD NOT BE HERE
+        //MovieAPI movieAPI = new MovieAPI(); //TODO: REMOVE HERE SHOULD NOT BE HERE
 
         MovieRepo movieRepo = new MovieRepo();
         observableMovies.addAll(movieRepo.getMovies());
 
-        // initialize UI stuff
+        // *** Initialize UI ***
+
+        // - Movie-list view -
         movieListView.setItems(observableMovies);   // set data of observable list to list view
         movieListView.setCellFactory(movieListView -> new MovieCell()); // use custom cell factory to display data
 
-        // Genre UI
+        // - Menu Icons -
+        hamburgerIcon = new Image(
+                Objects.requireNonNull(getClass().getResource("/Icons/hamburger-menu.png"))
+                        .toExternalForm()
+        );
+        closeIcon = new Image(
+                Objects.requireNonNull(getClass().getResource("/Icons/close-menu.png"))
+                        .toExternalForm()
+        );
+
+        // - Menu Button -
+        menuBtn.setText("");
+        menuIcon.setImage(hamburgerIcon);
+
+        // - Sidebar -
+        borderPane.setRight(null);
+        sidebar.setManaged(false);
+        sidebar.setVisible(false);
+
+        // -- Genre ComboBox --
         genreComboBox.setPromptText("Filter by Genre");
         genreComboBox.getItems().addAll(Genre.values());
 
-        // Release Year UI
+        // - Release Year ComboBox -
         updateYearComboBox();
         yearComboBox.getSelectionModel().selectFirst();
 
-        // Rating UI
+        // - Rating Spinner -
         SpinnerValueFactory<Double> ratingValueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0, 10.0, 0.0, 0.1);
         ratingSpinner.setValueFactory(ratingValueFactory);
         ratingSpinner.getEditor().setText("");
         ratingSpinner.getEditor().setPromptText("Rating");
 
+        // *** Actions ***
 
-        // Sorting Button
+        // - Menu Button -
+        menuBtn.setOnAction(actionEvent -> {
+            boolean sidebarStatus = borderPane.getRight() == null;
+
+            if (sidebarStatus) {
+                borderPane.setRight(sidebar);
+                sidebar.setVisible(true);
+                sidebar.setManaged(true);
+                menuIcon.setImage(closeIcon);
+            } else {
+                borderPane.setRight(null);
+                sidebar.setVisible(false);
+                sidebar.setManaged(false);
+                menuIcon.setImage(hamburgerIcon);
+            }
+        });
+
+        // - Sorting Button -
         sortBtn.setOnAction(actionEvent -> {
             if (isAscending) {
                 // Sort Movies alphabetically ascending
@@ -101,7 +172,7 @@ public class HomeController implements Initializable {
             isAscending = !isAscending; // Toggle sorting order
         });
 
-        // Filter/Search Button
+        // - Filter/Search Button -
         searchBtn.setOnAction(actionEvent -> {
             String query = searchField.getText(); // Get search query from searchField
             Genre genre = (Genre) genreComboBox.getValue(); // Get genre from genreComboBox
@@ -121,7 +192,7 @@ public class HomeController implements Initializable {
             }
         });
 
-        // Rating Spinner
+        // - Rating Spinner -
         ratingSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == null) {
                 ratingSpinner.getValueFactory().setValue(oldValue);
@@ -160,5 +231,22 @@ public class HomeController implements Initializable {
         if (yearComboBox.getValue() == null) {
             yearComboBox.setValue(NO_YEAR_FILTER);
         }
-    };
+    }
+
+    public void goHome(ActionEvent actionEvent) throws IOException {
+        Parent watchlistRoot = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("home-view.fxml")));
+        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(watchlistRoot));
+        stage.show();
+    }
+
+    public void goWatchlist(ActionEvent actionEvent) throws IOException {
+        Parent watchlistRoot = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("watchlist-view.fxml")));
+        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(watchlistRoot));
+        stage.show();
+    }
+
+    public void goAbout(ActionEvent actionEvent) {
+    }
 }
