@@ -2,6 +2,7 @@ package at.ac.fhcampuswien.fhmdb.ui;
 
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import javafx.geometry.Insets;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.Background;
@@ -19,6 +20,14 @@ public class MovieCell extends ListCell<Movie> {
     private final Label rating = new Label();
 
     private final VBox layout = new VBox(title, detail, genre, releaseYear, rating);
+    private final Button watchlistBtn = new Button("Watchlist");
+
+    public MovieCell(ClickEventHandler<Movie> addToWatchlistClicked) {
+        super();
+        watchlistBtn.setOnMouseClicked(mouseEvent -> {
+            addToWatchlistClicked.onClick(getItem());
+        });
+    }
 
     @Override
     protected void updateItem(Movie movie, boolean empty) {

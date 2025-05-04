@@ -4,6 +4,7 @@ import at.ac.fhcampuswien.fhmdb.api.MovieAPI;
 import at.ac.fhcampuswien.fhmdb.helpers.MovieDisplayHelper;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
+import at.ac.fhcampuswien.fhmdb.ui.ClickEventHandler;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
@@ -54,7 +55,13 @@ public class HomeController implements Initializable {
 
     public static final int NO_YEAR_FILTER = -1;
 
-    private String initialUrl = "https://prog2.fh-campuswien.ac.at/movies"; // Initial URL
+    private String initialUrl = "https://prog2.fh-campuswien.ac.at/movies";
+
+    private final ClickEventHandler<Movie> onAddToWatchlistClicked = (clickedItem) -> {
+        //create new watchlistMovieEntity with clickedItem.getId()
+
+    };
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -71,7 +78,7 @@ public class HomeController implements Initializable {
 
         // initialize UI stuff
         movieListView.setItems(observableMovies);   // set data of observable list to list view
-        movieListView.setCellFactory(movieListView -> new MovieCell()); // use custom cell factory to display data
+        movieListView.setCellFactory(movieListView -> new MovieCell(onAddToWatchlistClicked)); // use custom cell factory to display data
 
         // Genre UI
         genreComboBox.setPromptText("Filter by Genre");
