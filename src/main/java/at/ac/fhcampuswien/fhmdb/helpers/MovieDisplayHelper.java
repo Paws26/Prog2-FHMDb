@@ -1,9 +1,7 @@
 package at.ac.fhcampuswien.fhmdb.helpers;
-
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import javafx.collections.ObservableList;
-
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;

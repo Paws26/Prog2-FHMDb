@@ -5,6 +5,9 @@ module at.ac.fhcampuswien.fhmdb {
     requires okhttp3;
     requires com.google.gson;
     requires surefire.shared.utils;
+    requires java.sql;
+    requires static lombok;
+    requires com.h2database;
 
 
     opens at.ac.fhcampuswien.fhmdb to javafx.fxml;

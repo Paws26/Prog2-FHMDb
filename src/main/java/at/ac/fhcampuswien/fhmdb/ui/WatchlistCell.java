@@ -5,21 +5,24 @@ import com.jfoenix.controls.JFXButton;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
-import javafx.scene.layout.*;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 import java.util.stream.Collectors;
 
-public class MovieCell extends ListCell<Movie> {
+public class WatchlistCell extends ListCell<Movie> {
     private final Label title = new Label();
     private final Label detail = new Label();
     private final Label genre = new Label();
     private final Label releaseYear = new Label();
     private final Label rating = new Label();
     private final JFXButton showDetails = new JFXButton();
-    private final JFXButton addToWatchlist = new JFXButton();
+    private final JFXButton removeFromWatchlist = new JFXButton();
 
-    private final HBox titleLayout = new HBox(title, showDetails, addToWatchlist);
+    private final HBox titleLayout = new HBox(title, showDetails, removeFromWatchlist);
     private final VBox layout = new VBox(titleLayout, detail, genre, releaseYear, rating);
 
     @Override
@@ -33,7 +36,7 @@ public class MovieCell extends ListCell<Movie> {
             this.getStyleClass().add("movie-cell");
             title.setText(movie.getTitle());
             showDetails.setText("Show Details");
-            addToWatchlist.setText("Add to Watchlist");
+            removeFromWatchlist.setText("Remove");
             detail.setText(
                     movie.getDescription() != null
                             ? movie.getDescription()
@@ -48,8 +51,8 @@ public class MovieCell extends ListCell<Movie> {
             title.getStyleClass().add("text-yellow");
             showDetails.getStyleClass().add("text-black");
             showDetails.getStyleClass().add("background-yellow");
-            addToWatchlist.getStyleClass().add("text-black");
-            addToWatchlist.getStyleClass().add("background-yellow");
+            removeFromWatchlist.getStyleClass().add("text-black");
+            removeFromWatchlist.getStyleClass().add("background-yellow");
             detail.getStyleClass().add("text-white");
             genre.getStyleClass().add("text-white");
             releaseYear.getStyleClass().add("text-white");
