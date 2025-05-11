@@ -1,8 +1,9 @@
 package at.ac.fhcampuswien.fhmdb;
-import at.ac.fhcampuswien.fhmdb.api.MovieAPI;
-import at.ac.fhcampuswien.fhmdb.api.MovieRepo;
+import at.ac.fhcampuswien.fhmdb.database.MovieDataInitializer;
 import at.ac.fhcampuswien.fhmdb.helpers.MovieDisplayHelper;
-import at.ac.fhcampuswien.fhmdb.models.Genre;
+import at.ac.fhcampuswien.fhmdb.models.MovieEntity;
+import at.ac.fhcampuswien.fhmdb.repositories.WatchlistRepository;
+import at.ac.fhcampuswien.fhmdb.utils.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
 import com.jfoenix.controls.JFXButton;
@@ -17,194 +18,161 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 
-
+//home controller
 public class HomeController implements Initializable {
+
+    private final WatchlistRepository watchlistRepository;
+
     @FXML
     private BorderPane borderPane;
-
     @FXML
-    public JFXButton searchBtn;
-
+    public JFXButton filterBtn;
     @FXML
     public TextField searchField;
-
     @FXML
-    public JFXListView movieListView;
-
+    public JFXListView<Movie> movieListView;
     @FXML
-    public JFXComboBox genreComboBox;
-
+    public JFXComboBox<Genre> genreComboBox;
     @FXML
     public JFXComboBox<Integer> yearComboBox;
-
     @FXML
     public Spinner<Double> ratingSpinner;
-
     @FXML
     public JFXButton sortBtn;
-
-    // automatically updates corresponding UI elements when underlying data changes
-    private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();
     @FXML
     public JFXButton menuBtn;
-
     @FXML
     private ImageView menuIcon;
-
     @FXML
     private VBox sidebar;
 
-//    public List<Movie> allMovies = new ArrayList<>() {
-//    };
-
-    //private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();   // automatically updates corresponding UI elements when underlying data changes
+    // automatically updates corresponding UI elements when underlying data changes
+    private final ObservableList<Movie> observableMovies =
+            FXCollections.observableArrayList();
 
     private boolean isAscending = true; //track the current sorting order
-
     public static final int NO_YEAR_FILTER = -1;
-
-    //TODO: remove fromo here, should not be here
-    private String initialUrl = "https://prog2.fh-campuswien.ac.at/movies"; // Initial URL
     private Image hamburgerIcon;
     private Image closeIcon;
 
 
+    //init watchlist repo
+    public HomeController() {
+            this.watchlistRepository = new WatchlistRepository();
+    };
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        MovieAPI movieAPI = new MovieAPI();
+        try {
+            // Initialize movie data
+            List<Movie> movies = MovieDataInitializer.loadAndCacheMovies();
+            observableMovies.addAll(movies);
 
-        //MovieAPI movieAPI = new MovieAPI(); //TODO: REMOVE HERE SHOULD NOT BE HERE
+            // Set up list view
+            movieListView.setItems(observableMovies);
+            //use custom cell factory to display data, init with the watchlist click handler
+            movieListView.setCellFactory(movieListView
+                    -> new MovieCell(this::onAddToWatchlistClicked));
 
-        MovieRepo movieRepo = new MovieRepo();
-        observableMovies.addAll(movieRepo.getMovies());
+            // - Menu Icons -
+            hamburgerIcon = new Image(
+                    Objects.requireNonNull(getClass().getResource("/Icons/hamburger-menu.png"))
+                            .toExternalForm()
+            );
+            closeIcon = new Image(
+                    Objects.requireNonNull(getClass().getResource("/Icons/close-menu.png"))
+                            .toExternalForm()
+            );
 
-        // *** Initialize UI ***
+            // - Menu Button -
+            menuBtn.setText("");
+            menuIcon.setImage(hamburgerIcon);
+            // - Sidebar -
+            borderPane.setRight(null);
+            sidebar.setManaged(false);
+            sidebar.setVisible(false);
 
-        // - Movie-list view -
-        movieListView.setItems(observableMovies);   // set data of observable list to list view
-        movieListView.setCellFactory(movieListView -> new MovieCell()); // use custom cell factory to display data
+            // -- Genre ComboBox --
+            genreComboBox.setPromptText("Filter by Genre");
+            genreComboBox.getItems().addAll(Genre.values());
 
-        // - Menu Icons -
-        hamburgerIcon = new Image(
-                Objects.requireNonNull(getClass().getResource("/Icons/hamburger-menu.png"))
-                        .toExternalForm()
-        );
-        closeIcon = new Image(
-                Objects.requireNonNull(getClass().getResource("/Icons/close-menu.png"))
-                        .toExternalForm()
-        );
+            // - Release Year ComboBox -
+            updateYearComboBox();
+            yearComboBox.getSelectionModel().selectFirst();
 
-        // - Menu Button -
-        menuBtn.setText("");
-        menuIcon.setImage(hamburgerIcon);
+            // - Rating Spinner -
+            SpinnerValueFactory<Double> ratingValueFactory =
+                    new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0, 10.0, 0.0, 0.1);
+            ratingSpinner.setValueFactory(ratingValueFactory);
+            ratingSpinner.getEditor().setText("");
+            ratingSpinner.getEditor().setPromptText("Rating");
 
-        // - Sidebar -
-        borderPane.setRight(null);
-        sidebar.setManaged(false);
-        sidebar.setVisible(false);
+            // Set up button actions
+            setupButtonActions();
+        } catch (Exception e) {
+            showAlert("Initialization Error", "Failed to initialize application: " + e.getMessage());
+        }
+    };
 
-        // -- Genre ComboBox --
-        genreComboBox.setPromptText("Filter by Genre");
-        genreComboBox.getItems().addAll(Genre.values());
+    //button actions
+    private void setupButtonActions() {
+         //- Menu Button -
+            menuBtn.setOnAction(actionEvent -> {
+                boolean sidebarStatus = borderPane.getRight() == null;
+                if (sidebarStatus) {
+                    borderPane.setRight(sidebar);
+                    sidebar.setVisible(true);
+                    sidebar.setManaged(true);
+                    menuIcon.setImage(closeIcon);
+                } else {
+                    borderPane.setRight(null);
+                    sidebar.setVisible(false);
+                    sidebar.setManaged(false);
+                    menuIcon.setImage(hamburgerIcon);
+                }
+            });
 
-        // - Release Year ComboBox -
-        updateYearComboBox();
-        yearComboBox.getSelectionModel().selectFirst();
-
-        // - Rating Spinner -
-        SpinnerValueFactory<Double> ratingValueFactory = new SpinnerValueFactory.DoubleSpinnerValueFactory(0.0, 10.0, 0.0, 0.1);
-        ratingSpinner.setValueFactory(ratingValueFactory);
-        ratingSpinner.getEditor().setText("");
-        ratingSpinner.getEditor().setPromptText("Rating");
-
-        // *** Actions ***
-
-        // - Menu Button -
-        menuBtn.setOnAction(actionEvent -> {
-            boolean sidebarStatus = borderPane.getRight() == null;
-
-            if (sidebarStatus) {
-                borderPane.setRight(sidebar);
-                sidebar.setVisible(true);
-                sidebar.setManaged(true);
-                menuIcon.setImage(closeIcon);
-            } else {
-                borderPane.setRight(null);
-                sidebar.setVisible(false);
-                sidebar.setManaged(false);
-                menuIcon.setImage(hamburgerIcon);
-            }
-        });
-
-        // - Sorting Button -
+        //sort button
         sortBtn.setOnAction(actionEvent -> {
-            if (isAscending) {
-                // Sort Movies alphabetically ascending
-                List<Movie> sortedMovies = MovieDisplayHelper.sortMoviesAscending(observableMovies);
-                observableMovies.clear();
-                observableMovies.addAll(sortedMovies);
-                sortBtn.setText("Sort (desc)");
-            } else {
-                // Sort Movies alphabetically descending
-                List<Movie> sortedMovies = MovieDisplayHelper.sortMoviesDescending(observableMovies);
-                observableMovies.clear();
-                observableMovies.addAll(sortedMovies);
-                sortBtn.setText("Sort (asc)");
-            }
-
-            isAscending = !isAscending; // Toggle sorting order
+                isAscending = !isAscending;
+                filterBtn.fire(); // Trigger the filter action to reapply with new sort order
+                sortBtn.setText(isAscending ? "Sort (desc)" : "Sort (asc)");
         });
 
-        // - Filter/Search Button -
-        searchBtn.setOnAction(actionEvent -> {
-            String query = searchField.getText(); // Get search query from searchField
-            Genre genre = (Genre) genreComboBox.getValue(); // Get genre from genreComboBox
-            Integer releaseYear = yearComboBox.getValue(); // Get release year from yearComboBox
-            Double rating = ratingSpinner.getValue(); // Get rating from ratingSpinner
+        // Filter button
+        filterBtn.setOnAction(evt -> applyFilters());
 
-            // Build API Url using queried values
-            String queriedUrl = movieAPI.buildApiURL(initialUrl, query, genre, releaseYear, rating);
-
-            try {
-                // Update observable list with filtered Movies from API response
-                observableMovies.setAll(movieAPI.parseJsonMovies(movieAPI.getMoviesJson(queriedUrl)));
-
-                updateYearComboBox();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-
-        // - Rating Spinner -
-        ratingSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue == null) {
-                ratingSpinner.getValueFactory().setValue(oldValue);
-            }
-        });
+         //- Rating Spinner -
+        ratingSpinner.valueProperty().addListener(
+                (observable,
+                 oldValue, newValue) -> {
+                    if (newValue == null) {
+                            ratingSpinner.getValueFactory().setValue(oldValue);
+                    }
+                });
     };
 
     //update combo year box
     private void updateYearComboBox() {
         List<Integer> filteredYears = MovieDisplayHelper.getDistinctReleaseYears(observableMovies);
         if (!filteredYears.contains(NO_YEAR_FILTER)) {
-            filteredYears.add(0, NO_YEAR_FILTER);  // Add NO_YEAR_FILTER = -1 at the beginning
+            filteredYears.addFirst(NO_YEAR_FILTER);  // Add NO_YEAR_FILTER = -1 at the beginning
         }
         yearComboBox.setItems(FXCollections.observableArrayList(filteredYears));
 
@@ -231,22 +199,103 @@ public class HomeController implements Initializable {
         if (yearComboBox.getValue() == null) {
             yearComboBox.setValue(NO_YEAR_FILTER);
         }
-    }
+    };
 
+    //apply filters
+    private void applyFilters() {
+        try {
+            // Get filter values
+            String query = searchField.getText().trim();
+            Genre genre = genreComboBox.getValue();
+            Integer year = yearComboBox.getValue() == NO_YEAR_FILTER ? null : yearComboBox.getValue();
+            Double rating = ratingSpinner.getValue() == 0.0 ? null : ratingSpinner.getValue();
+
+            // Start with all movies
+            List<Movie> filteredMovies = MovieDataInitializer.loadAndCacheMovies();
+
+            // Apply filters
+            if (!query.isEmpty()) {
+                filteredMovies = MovieDisplayHelper.filterMoviesBySearch(filteredMovies, query);
+            }
+
+            if (genre != null && genre != Genre.ANY) {
+                filteredMovies = MovieDisplayHelper.filterMoviesByGenre(filteredMovies, genre);
+            }
+
+            if (year != null) {
+                filteredMovies = filteredMovies.stream()
+                        .filter(movie -> movie.getReleaseYear() == year)
+                        .collect(Collectors.toList());
+            }
+
+            if (rating != null) {
+                filteredMovies = filteredMovies.stream()
+                        .filter(movie -> movie.getRating() >= rating)
+                        .collect(Collectors.toList());
+            }
+
+            // Apply sorting
+            filteredMovies = isAscending ?
+                    MovieDisplayHelper.sortMoviesAscending(FXCollections.observableArrayList(filteredMovies)) :
+                    MovieDisplayHelper.sortMoviesDescending(FXCollections.observableArrayList(filteredMovies));
+
+            // Update UI
+            observableMovies.setAll(filteredMovies);
+            updateYearComboBox();
+
+        } catch (Exception e) {
+            showAlert("Filter Error",  "Failed to apply filters: " + e.getMessage());
+        };
+    };
+
+    //add on watchlist clicked
+    private void onAddToWatchlistClicked(Movie movie) {
+        try {
+            // Convert Movie to MovieEntity if needed
+            MovieEntity movieEntity = new MovieEntity(movie);
+
+            // Add to watchlist repository
+            boolean added = watchlistRepository.addToWatchlist(movieEntity);
+
+            if (added) {
+                showAlert("Success", "Movie added to watchlist!");
+            } else {
+                System.out.println("Movie was already in watchlist");
+            };
+        } catch (Exception  e) {
+            showAlert("Error", "Failed to add movie to watchlist: " + e.getMessage());
+
+        }
+    };
+
+    //alert prompt
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    };
+
+    //to home
     public void goHome(ActionEvent actionEvent) throws IOException {
         Parent watchlistRoot = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("home-view.fxml")));
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         stage.setScene(new Scene(watchlistRoot));
         stage.show();
-    }
+    };
 
+    //Go to watchlist view
     public void goWatchlist(ActionEvent actionEvent) throws IOException {
         Parent watchlistRoot = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("watchlist-view.fxml")));
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         stage.setScene(new Scene(watchlistRoot));
         stage.show();
-    }
+    };
 
+    //Not sure for what right now ?
     public void goAbout(ActionEvent actionEvent) {
-    }
+    };
 }
+
+

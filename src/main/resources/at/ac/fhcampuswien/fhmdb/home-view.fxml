@@ -46,7 +46,7 @@
                          prefWidth="100" focusColor="#f5c518"
                          styleClass="filter-combo-box" stylesheets="@styles.css"/>
             <Spinner fx:id="ratingSpinner" editable="true" prefWidth="80"/>
-            <JFXButton fx:id="searchBtn" text="Filter"
+            <JFXButton fx:id="filterBtn" text="Filter"
                        styleClass="background-yellow" stylesheets="@styles.css"/>
          </HBox>
       </VBox>

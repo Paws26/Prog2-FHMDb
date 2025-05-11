@@ -1,6 +1,6 @@
-package at.ac.fhcampuswien.fhmdb.models;
+package at.ac.fhcampuswien.fhmdb.utils;
 
-public enum Genre {
+public enum  Genre {
     ANY, ACTION, ADVENTURE, ANIMATION, BIOGRAPHY, COMEDY,
     CRIME, DRAMA, DOCUMENTARY, FAMILY, FANTASY, HISTORY, HORROR,
     MUSICAL, MYSTERY, ROMANCE, SCIENCE_FICTION, SPORT, THRILLER, WAR,
