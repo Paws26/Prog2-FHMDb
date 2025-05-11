@@ -1,5 +1,5 @@
 package at.ac.fhcampuswien.fhmdb.helpers;
-import at.ac.fhcampuswien.fhmdb.utils.Genre;
+import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import javafx.collections.ObservableList;
 import java.util.*;

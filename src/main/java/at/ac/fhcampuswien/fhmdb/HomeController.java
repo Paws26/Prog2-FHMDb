@@ -1,11 +1,13 @@
 package at.ac.fhcampuswien.fhmdb;
+
 import at.ac.fhcampuswien.fhmdb.database.MovieDataInitializer;
 import at.ac.fhcampuswien.fhmdb.helpers.MovieDisplayHelper;
 import at.ac.fhcampuswien.fhmdb.models.MovieEntity;
 import at.ac.fhcampuswien.fhmdb.repositories.WatchlistRepository;
-import at.ac.fhcampuswien.fhmdb.utils.Genre;
+import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
+import at.ac.fhcampuswien.fhmdb.utils.ClickEventHandler;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXListView;
@@ -25,9 +27,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -36,8 +38,6 @@ import java.util.stream.Collectors;
 
 //home controller
 public class HomeController implements Initializable {
-
-    private final WatchlistRepository watchlistRepository;
 
     @FXML
     private BorderPane borderPane;
@@ -71,10 +71,25 @@ public class HomeController implements Initializable {
     private Image hamburgerIcon;
     private Image closeIcon;
 
+    private final ClickEventHandler<Movie> onAddToWatchlistClicked = (clickedItem) ->
+    {
+        try {
+            // Convert Movie to MovieEntity if needed
+            MovieEntity movieEntity = new MovieEntity(clickedItem);
 
-    //init watchlist repo
-    public HomeController() {
-            this.watchlistRepository = new WatchlistRepository();
+            // Add to watchlist repository
+            boolean added = new WatchlistRepository().addToWatchlist(movieEntity);
+
+            if (added) {
+                showAlert("Success", "Movie added to watchlist!");
+            } else {
+                System.out.println("Movie was already in watchlist");
+            }
+
+        } catch (Exception e) {
+            showAlert("Error", "Failed to add movie to watchlist: " + e.getMessage());
+
+        }
     };
 
     @Override
@@ -88,7 +103,7 @@ public class HomeController implements Initializable {
             movieListView.setItems(observableMovies);
             //use custom cell factory to display data, init with the watchlist click handler
             movieListView.setCellFactory(movieListView
-                    -> new MovieCell(this::onAddToWatchlistClicked));
+                    -> new MovieCell(onAddToWatchlistClicked));
 
             // - Menu Icons -
             hamburgerIcon = new Image(
@@ -126,47 +141,51 @@ public class HomeController implements Initializable {
             // Set up button actions
             setupButtonActions();
         } catch (Exception e) {
-            showAlert("Initialization Error", "Failed to initialize application: " + e.getMessage());
+            showAlert("Initialization Error", e.getMessage());
         }
-    };
+    }
+
+    ;
 
     //button actions
     private void setupButtonActions() {
-         //- Menu Button -
-            menuBtn.setOnAction(actionEvent -> {
-                boolean sidebarStatus = borderPane.getRight() == null;
-                if (sidebarStatus) {
-                    borderPane.setRight(sidebar);
-                    sidebar.setVisible(true);
-                    sidebar.setManaged(true);
-                    menuIcon.setImage(closeIcon);
-                } else {
-                    borderPane.setRight(null);
-                    sidebar.setVisible(false);
-                    sidebar.setManaged(false);
-                    menuIcon.setImage(hamburgerIcon);
-                }
-            });
+        //- Menu Button -
+        menuBtn.setOnAction(actionEvent -> {
+            boolean sidebarStatus = borderPane.getRight() == null;
+            if (sidebarStatus) {
+                borderPane.setRight(sidebar);
+                sidebar.setVisible(true);
+                sidebar.setManaged(true);
+                menuIcon.setImage(closeIcon);
+            } else {
+                borderPane.setRight(null);
+                sidebar.setVisible(false);
+                sidebar.setManaged(false);
+                menuIcon.setImage(hamburgerIcon);
+            }
+        });
 
         //sort button
         sortBtn.setOnAction(actionEvent -> {
-                isAscending = !isAscending;
-                filterBtn.fire(); // Trigger the filter action to reapply with new sort order
-                sortBtn.setText(isAscending ? "Sort (desc)" : "Sort (asc)");
+            isAscending = !isAscending;
+            filterBtn.fire(); // Trigger the filter action to reapply with new sort order
+            sortBtn.setText(isAscending ? "Sort (desc)" : "Sort (asc)");
         });
 
         // Filter button
         filterBtn.setOnAction(evt -> applyFilters());
 
-         //- Rating Spinner -
+        //- Rating Spinner -
         ratingSpinner.valueProperty().addListener(
                 (observable,
                  oldValue, newValue) -> {
                     if (newValue == null) {
-                            ratingSpinner.getValueFactory().setValue(oldValue);
+                        ratingSpinner.getValueFactory().setValue(oldValue);
                     }
                 });
-    };
+    }
+
+    ;
 
     //update combo year box
     private void updateYearComboBox() {
@@ -199,7 +218,9 @@ public class HomeController implements Initializable {
         if (yearComboBox.getValue() == null) {
             yearComboBox.setValue(NO_YEAR_FILTER);
         }
-    };
+    }
+
+    ;
 
     //apply filters
     private void applyFilters() {
@@ -244,29 +265,12 @@ public class HomeController implements Initializable {
             updateYearComboBox();
 
         } catch (Exception e) {
-            showAlert("Filter Error",  "Failed to apply filters: " + e.getMessage());
-        };
-    };
-
-    //add on watchlist clicked
-    private void onAddToWatchlistClicked(Movie movie) {
-        try {
-            // Convert Movie to MovieEntity if needed
-            MovieEntity movieEntity = new MovieEntity(movie);
-
-            // Add to watchlist repository
-            boolean added = watchlistRepository.addToWatchlist(movieEntity);
-
-            if (added) {
-                showAlert("Success", "Movie added to watchlist!");
-            } else {
-                System.out.println("Movie was already in watchlist");
-            };
-        } catch (Exception  e) {
-            showAlert("Error", "Failed to add movie to watchlist: " + e.getMessage());
-
+            showAlert("Filter Error", "Failed to apply filters: " + e.getMessage());
         }
-    };
+        ;
+    }
+
+    ;
 
     //alert prompt
     private void showAlert(String title, String message) {
@@ -275,7 +279,9 @@ public class HomeController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
-    };
+    }
+
+    ;
 
     //to home
     public void goHome(ActionEvent actionEvent) throws IOException {
@@ -283,7 +289,9 @@ public class HomeController implements Initializable {
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         stage.setScene(new Scene(watchlistRoot));
         stage.show();
-    };
+    }
+
+    ;
 
     //Go to watchlist view
     public void goWatchlist(ActionEvent actionEvent) throws IOException {
@@ -291,11 +299,15 @@ public class HomeController implements Initializable {
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         stage.setScene(new Scene(watchlistRoot));
         stage.show();
-    };
+    }
+
+    ;
 
     //Not sure for what right now ?
     public void goAbout(ActionEvent actionEvent) {
-    };
+    }
+
+    ;
 }
 
 

@@ -1,7 +1,7 @@
 package at.ac.fhcampuswien.fhmdb;
 
 import at.ac.fhcampuswien.fhmdb.helpers.MovieDisplayHelper;
-import at.ac.fhcampuswien.fhmdb.utils.Genre;
+import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

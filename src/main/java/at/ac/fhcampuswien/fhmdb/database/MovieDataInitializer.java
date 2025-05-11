@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.fhmdb.database;
 import at.ac.fhcampuswien.fhmdb.api.MovieAPI;
+import at.ac.fhcampuswien.fhmdb.api.MovieAPIException;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.models.MovieEntity;
 import at.ac.fhcampuswien.fhmdb.repositories.MovieRepository;
@@ -11,7 +12,7 @@ import java.util.stream.Collectors;
 //fetch and save the data from api in database
 public class MovieDataInitializer {
 
-    public static List<Movie> loadAndCacheMovies() {
+    public static List<Movie> loadAndCacheMovies() throws DatabaseException {
         try {
             // 1. Try fetch from API
             MovieAPI api = new MovieAPI();
@@ -27,9 +28,7 @@ public class MovieDataInitializer {
                     .map(MovieEntity::toMovie)
                     .collect(Collectors.toList());
 
-        } catch (Exception apiOrSaveError) {
-            System.err.println("⚠️ Failed to fetch/cache API movies: " + apiOrSaveError.getMessage());
-
+        } catch(MovieAPIException movieAPIException){
             // 4. Fallback: load from DB
             try {
                 MovieRepository repo = new MovieRepository();
@@ -38,11 +37,16 @@ public class MovieDataInitializer {
                 System.out.println("✅ Fallback: loaded movies from DB.");
                 return cached.stream().map(MovieEntity::toMovie).collect(Collectors.toList());
 
-            } catch (Exception dbError) {
+            } catch (DatabaseException dbError) {
                 System.err.println("❌ DB fallback failed: " + dbError.getMessage());
-                return Collections.emptyList();
+                throw dbError;
             }
+
         }
-    };
+        catch (DatabaseException ex) {
+            System.err.println("⚠️ Failed to cache API movies: " + ex.getMessage());
+            throw ex;
+        }
+    }
 }
 

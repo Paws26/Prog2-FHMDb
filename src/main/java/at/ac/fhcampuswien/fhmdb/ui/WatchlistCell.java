@@ -1,4 +1,5 @@
 package at.ac.fhcampuswien.fhmdb.ui;
+
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.utils.ClickEventHandler;
 import com.jfoenix.controls.JFXButton;
@@ -10,13 +11,11 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+
 import java.util.stream.Collectors;
 
 
-
 public class WatchlistCell extends ListCell<Movie> {
-
-    private final ClickEventHandler<Movie> removeFromWatchlistClicked;
 
     private final Label title = new Label();
     private final Label detail = new Label();
@@ -24,20 +23,22 @@ public class WatchlistCell extends ListCell<Movie> {
     private final Label releaseYear = new Label();
     private final Label rating = new Label();
     private final JFXButton showDetails = new JFXButton();
-    private final JFXButton removeFromWatchlist = new JFXButton();
-    private final HBox titleLayout = new HBox(title, showDetails, removeFromWatchlist);
+    private final JFXButton removeFromWatchlistBtn = new JFXButton();
+    private final HBox titleLayout = new HBox(title, showDetails, removeFromWatchlistBtn);
     private final VBox layout = new VBox(titleLayout, detail, genre, releaseYear, rating);
 
 
     //attach click event handler to watchlist cell
     public WatchlistCell(ClickEventHandler<Movie> removeFromWatchlistClicked) {
-        this.removeFromWatchlistClicked = removeFromWatchlistClicked;
-        removeFromWatchlist.setOnAction(event -> {
+        super();
+        removeFromWatchlistBtn.setOnAction(event -> {
             if (getItem() != null) {
                 removeFromWatchlistClicked.onClick(getItem());
             }
         });
-    };
+    }
+
+    ;
 
 
     @Override
@@ -51,7 +52,7 @@ public class WatchlistCell extends ListCell<Movie> {
             this.getStyleClass().add("movie-cell");
             title.setText(movie.getTitle());
             showDetails.setText("Show Details");
-            removeFromWatchlist.setText("Remove");
+            removeFromWatchlistBtn.setText("Remove");
             detail.setText(
                     movie.getDescription() != null
                             ? movie.getDescription()
@@ -66,8 +67,8 @@ public class WatchlistCell extends ListCell<Movie> {
             title.getStyleClass().add("text-yellow");
             showDetails.getStyleClass().add("text-black");
             showDetails.getStyleClass().add("background-yellow");
-            removeFromWatchlist.getStyleClass().add("text-black");
-            removeFromWatchlist.getStyleClass().add("background-yellow");
+            removeFromWatchlistBtn.getStyleClass().add("text-black");
+            removeFromWatchlistBtn.getStyleClass().add("background-yellow");
             detail.getStyleClass().add("text-white");
             genre.getStyleClass().add("text-white");
             releaseYear.getStyleClass().add("text-white");
@@ -78,9 +79,9 @@ public class WatchlistCell extends ListCell<Movie> {
             title.fontProperty().set(title.getFont().font(20));
             detail.maxWidthProperty().bind(
                     getListView().widthProperty()
-                            .subtract( getListView().getInsets().getLeft()
+                            .subtract(getListView().getInsets().getLeft()
                                     + getListView().getInsets().getRight()
-                                    + 45 )
+                                    + 45)
             );
             detail.setWrapText(true);
             layout.setPadding(new Insets(10));

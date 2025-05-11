@@ -1,4 +1,5 @@
 package at.ac.fhcampuswien.fhmdb;
+import at.ac.fhcampuswien.fhmdb.database.DatabaseException;
 import at.ac.fhcampuswien.fhmdb.database.DatabaseManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -17,7 +18,7 @@ public class FhmdbApplication extends Application {
         // Initialize database first
         try {
             DatabaseManager.init();
-        } catch (SQLException e) {
+        } catch (DatabaseException e) {
             e.printStackTrace();
             // Show error alert to user
             Alert alert = new Alert(Alert.AlertType.ERROR);

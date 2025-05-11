@@ -1,5 +1,4 @@
 package at.ac.fhcampuswien.fhmdb.models;
-import at.ac.fhcampuswien.fhmdb.utils.Genre;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import lombok.Data;

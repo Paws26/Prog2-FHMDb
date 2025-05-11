@@ -1,5 +1,4 @@
 package at.ac.fhcampuswien.fhmdb.models;
-import at.ac.fhcampuswien.fhmdb.utils.Genre;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

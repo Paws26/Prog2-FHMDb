@@ -1,7 +1,11 @@
 package at.ac.fhcampuswien.fhmdb;
+
+import at.ac.fhcampuswien.fhmdb.database.DatabaseException;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.repositories.WatchlistRepository;
 import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
+import at.ac.fhcampuswien.fhmdb.ui.WatchlistCell;
+import at.ac.fhcampuswien.fhmdb.utils.ClickEventHandler;
 import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXComboBox;
 import com.jfoenix.controls.JFXListView;
@@ -22,6 +26,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -30,10 +35,7 @@ import java.util.Objects;
 import java.util.ResourceBundle;
 
 
-
 public class WatchlistController implements Initializable {
-
-    private final WatchlistRepository watchlistRepo;
 
     @FXML
     private BorderPane borderPane;
@@ -74,18 +76,28 @@ public class WatchlistController implements Initializable {
     private Image hamburgerIcon;
     private Image closeIcon;
 
+
+    private final ClickEventHandler<Movie> onRemoveFromWatchlistClicked = (clickedItem) -> {
+        try {
+            WatchlistRepository watchlistRepo = new WatchlistRepository();
+            watchlistRepo.removeFromWatchlist(clickedItem.getId());
+            loadWatchlist(); // Refresh the list
+        } catch (DatabaseException e) {
+            showAlert("Error", "Failed to remove from watchlist: " + e.getMessage());
+        }
+    };
+
     public WatchlistController() {
-            this.watchlistRepo = new WatchlistRepository();
-            loadWatchlist(); // Load data when controller is created
+        loadWatchlist(); // Load data when controller is created
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // *** Initialize UI ***
-        
+
         // - Movie-list view -
         watchlistListView.setItems(observableMovies);   // set data of observable list to list view
-        watchlistListView.setCellFactory(movieListView -> new MovieCell(this::onRemoveFromWatchlistClicked)); // use custom cell factory to display data
+        watchlistListView.setCellFactory(movieListView -> new WatchlistCell(onRemoveFromWatchlistClicked)); // use custom cell factory to display data
 
         // - Menu Icons -
         hamburgerIcon = new Image(
@@ -96,7 +108,7 @@ public class WatchlistController implements Initializable {
                 Objects.requireNonNull(getClass().getResource("/Icons/close-menu.png"))
                         .toExternalForm()
         );
-        
+
         // - Menu Button -
         menuBtn.setText("");
         menuIcon.setImage(hamburgerIcon);
@@ -107,7 +119,7 @@ public class WatchlistController implements Initializable {
         sidebar.setVisible(false);
 
         // *** Actions ***
-        
+
         // - Menu Button -
         menuBtn.setOnAction(actionEvent -> {
             boolean sidebarStatus = borderPane.getRight() == null;
@@ -128,9 +140,9 @@ public class WatchlistController implements Initializable {
 
     private void loadWatchlist() {
         try {
-            List<Movie> watchlistMovies = watchlistRepo.getWatchlistMovies();
+            List<Movie> watchlistMovies = new WatchlistRepository().getWatchlistMovies();
             observableMovies.setAll(watchlistMovies);
-        } catch (SQLException e) {
+        } catch (DatabaseException e) {
             showAlert("Error", "Failed to load watchlist: " + e.getMessage());
         }
     }
@@ -141,20 +153,9 @@ public class WatchlistController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
-    };
+    }
 
-
-
-    //if removed from watchlist
-    private void onRemoveFromWatchlistClicked(Movie movie) {
-        try {
-            watchlistRepo.removeFromWatchlist(movie.getId());
-            loadWatchlist(); // Refresh the list
-        } catch (SQLException e) {
-            e.printStackTrace();
-            // Show error to user
-        }
-    };
+    ;
 
 
     //navigate to home
@@ -163,7 +164,9 @@ public class WatchlistController implements Initializable {
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         stage.setScene(new Scene(watchlistRoot));
         stage.show();
-    };
+    }
+
+    ;
 
     //navigate to watchlist
     public void goWatchlist(ActionEvent actionEvent) throws IOException {
@@ -171,8 +174,11 @@ public class WatchlistController implements Initializable {
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         stage.setScene(new Scene(watchlistRoot));
         stage.show();
-    };
+    }
+
+    ;
 
     //navigate to about
-    public void goAbout(ActionEvent actionEvent) { }
+    public void goAbout(ActionEvent actionEvent) {
+    }
 };

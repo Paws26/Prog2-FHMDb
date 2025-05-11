@@ -18,13 +18,18 @@ public class DatabaseManager {
     @Getter
     private static ConnectionSource connectionSource;
 
-    public static void init() throws SQLException {
-        if(connectionSource == null) {
-            connectionSource = new JdbcConnectionSource(jdbcUrl, db_user, password);
+    public static void init() throws DatabaseException {
+        try {
+            if (connectionSource == null) {
+                connectionSource = new JdbcConnectionSource(jdbcUrl, db_user, password);
 
-            //create the tables based on the entities if not exist
-            TableUtils.createTableIfNotExists(connectionSource, MovieEntity.class);
-            TableUtils.createTableIfNotExists(connectionSource, WatchlistMovieEntity.class);
-        };
+                //create the tables based on the entities if not exist
+                TableUtils.createTableIfNotExists(connectionSource, MovieEntity.class);
+                TableUtils.createTableIfNotExists(connectionSource, WatchlistMovieEntity.class);
+            }
+        }
+        catch (SQLException e) {
+            throw new DatabaseException(e.getMessage());
+        }
     };
 };

@@ -1,4 +1,5 @@
 package at.ac.fhcampuswien.fhmdb.ui;
+import at.ac.fhcampuswien.fhmdb.database.DatabaseException;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.repositories.WatchlistRepository;
 import at.ac.fhcampuswien.fhmdb.utils.ClickEventHandler;
@@ -16,9 +17,6 @@ import java.util.stream.Collectors;
 
 public class MovieCell extends ListCell<Movie> {
 
-    private final WatchlistRepository watchlistRepo;
-    //private final ClickEventHandler<Movie> addToWatchlistClicked;
-
     private final Label title = new Label();
     private final Label detail = new Label();
     private final Label genre = new Label();
@@ -33,8 +31,6 @@ public class MovieCell extends ListCell<Movie> {
     public MovieCell(ClickEventHandler<Movie> addToWatchlistClicked) {
         super();
 
-        this.watchlistRepo = new WatchlistRepository();
-
         // Set up the button action
         addToWatchlistBtn.setOnAction(event -> {
             if (getItem() != null) {
@@ -47,10 +43,10 @@ public class MovieCell extends ListCell<Movie> {
     private void updateButtonText() {
         try {
             if (getItem() != null) {
-                boolean isInWatchlist = watchlistRepo.existsInWatchlist(getItem().getId());
-                addToWatchlistBtn.setText(isInWatchlist ? "Remove from Watchlist" : "Add to Watchlist");
+                boolean isInWatchlist = new WatchlistRepository().existsInWatchlist(getItem().getId());
+                addToWatchlistBtn.setText(isInWatchlist ? "Is in Watchlist" : "Add to Watchlist");
             }
-        } catch (SQLException e) {
+        } catch (DatabaseException e) {
             addToWatchlistBtn.setText("Add to Watchlist");
         }
     };
