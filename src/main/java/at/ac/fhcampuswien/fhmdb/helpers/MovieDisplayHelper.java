@@ -1,5 +1,5 @@
 package at.ac.fhcampuswien.fhmdb.helpers;
-import at.ac.fhcampuswien.fhmdb.models.Genre;
+import at.ac.fhcampuswien.fhmdb.utils.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import javafx.collections.ObservableList;
 import java.util.*;
@@ -126,7 +126,7 @@ public class MovieDisplayHelper {
             }
         }
         return filteredMovies;
-    }
+    };
 
     //Filter the incoming List of Movies by the genre
     public static List<Movie> filterMoviesByGenre(List<Movie> moviesToFilter, Genre genre) {
@@ -141,14 +141,14 @@ public class MovieDisplayHelper {
             }
         }
         return filteredMovies;
-    }
+    };
 
     //Filter the incoming List of Movies
     public static List<Movie> filterMovies(List<Movie> moviesToFilter, String query, Genre genre) {
         List<Movie> filteredMovies = filterMoviesByGenre(moviesToFilter, genre);
 
         return filterMoviesBySearch(filteredMovies, query);
-    }
+    };
 
     // Return distinct years for Movies
     public static List<Integer> getDistinctReleaseYears(ObservableList<Movie> filteredMovies) {
@@ -161,5 +161,5 @@ public class MovieDisplayHelper {
         filteredYears.sort(Comparator.reverseOrder());
 
         return filteredYears;
-    }
-}
+    };
+};

@@ -1,6 +1,4 @@
 package at.ac.fhcampuswien.fhmdb.api;
-import at.ac.fhcampuswien.fhmdb.HomeController;
-import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -19,30 +17,7 @@ import java.util.List;
 public class MovieAPI {
 
     private final String endpointUrl = "https://prog2.fh-campuswien.ac.at/movies"; // Initial URL
-
     private final OkHttpClient client = new OkHttpClient();
-
-    //TODO: rename to fetch movie
-    // Build API Url String for movieAPI Request
-    public String buildApiURL(
-            //TODO: remove later, will be final here
-            String url,
-            //TODO: remove later, wont be used anymore
-            String query,
-            Genre genre,
-            Integer year,
-            Double rating
-   )  {
-        try {
-            String json = getMoviesJson(endpointUrl);
-            List<Movie> movies = parseJsonMovies(json);
-            return json;
-        }
-        catch (IOException e) { System.out.println(e.getMessage()); }
-
-        //for now return url
-        return url;
-    };
     /******************************************************************************************************************/
     //use this instead
     public List<Movie>  fetMovieList() {
@@ -81,19 +56,4 @@ public class MovieAPI {
         }
         return movies; // Return the list (or null if error)
     };
-
-
-
-    //TODO: remove later
-    public String getMoviesJson(String url) throws IOException {
-        Request request = new Request.Builder().url(url).header("User-Agent", "http.agent").build(); // URL Request on API
-        try (Response response = client.newCall(request).execute()) {
-            if (!response.isSuccessful()) {
-                throw new IOException("Unexpected code " + response);
-            }
-            return response.body().string();  // return JSON String
-        }
-    };
-
-
-}
+};

@@ -1,6 +1,6 @@
 package at.ac.fhcampuswien.fhmdb.ui;
-
 import at.ac.fhcampuswien.fhmdb.models.Movie;
+import at.ac.fhcampuswien.fhmdb.utils.ClickEventHandler;
 import com.jfoenix.controls.JFXButton;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
@@ -10,10 +10,14 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-
 import java.util.stream.Collectors;
 
+
+
 public class WatchlistCell extends ListCell<Movie> {
+
+    private final ClickEventHandler<Movie> removeFromWatchlistClicked;
+
     private final Label title = new Label();
     private final Label detail = new Label();
     private final Label genre = new Label();
@@ -21,9 +25,20 @@ public class WatchlistCell extends ListCell<Movie> {
     private final Label rating = new Label();
     private final JFXButton showDetails = new JFXButton();
     private final JFXButton removeFromWatchlist = new JFXButton();
-
     private final HBox titleLayout = new HBox(title, showDetails, removeFromWatchlist);
     private final VBox layout = new VBox(titleLayout, detail, genre, releaseYear, rating);
+
+
+    //attach click event handler to watchlist cell
+    public WatchlistCell(ClickEventHandler<Movie> removeFromWatchlistClicked) {
+        this.removeFromWatchlistClicked = removeFromWatchlistClicked;
+        removeFromWatchlist.setOnAction(event -> {
+            if (getItem() != null) {
+                removeFromWatchlistClicked.onClick(getItem());
+            }
+        });
+    };
+
 
     @Override
     protected void updateItem(Movie movie, boolean empty) {

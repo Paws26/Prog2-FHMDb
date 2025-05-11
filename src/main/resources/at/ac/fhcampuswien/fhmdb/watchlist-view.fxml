@@ -45,6 +45,6 @@
 
     <!-- center: main content list -->
     <center>
-        <JFXListView fx:id="movieListView" styleClass="background-black" stylesheets="@styles.css" VBox.vgrow="ALWAYS"/>
+        <JFXListView fx:id="watchlistListView" styleClass="background-black" stylesheets="@styles.css" VBox.vgrow="ALWAYS"/>
     </center>
 </BorderPane>
