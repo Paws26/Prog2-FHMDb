@@ -10,7 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import java.sql.SQLException;
+
 import java.util.stream.Collectors;
 
 
@@ -24,7 +24,9 @@ public class MovieCell extends ListCell<Movie> {
     private final Label rating = new Label();
     private final JFXButton showDetailsBtn = new JFXButton();
     private final JFXButton addToWatchlistBtn = new JFXButton();
-    private final HBox titleLayout = new HBox(title, showDetailsBtn, addToWatchlistBtn);
+    private final Region titleButtonSpacer = new Region();
+    private final Region buttonSpacer = new Region();
+    private final HBox titleLayout = new HBox(title, titleButtonSpacer, showDetailsBtn, buttonSpacer, addToWatchlistBtn);
     private final VBox layout = new VBox(titleLayout, detail, genre, releaseYear, rating);
 
     //click event will be attached on movie cell
@@ -88,6 +90,8 @@ public class MovieCell extends ListCell<Movie> {
 
             // layout
             title.fontProperty().set(title.getFont().font(20));
+            HBox.setHgrow(titleButtonSpacer, Priority.ALWAYS);
+            buttonSpacer.setMinWidth(10);
             detail.maxWidthProperty().bind(
                     getListView().widthProperty()
                             .subtract( getListView().getInsets().getLeft()

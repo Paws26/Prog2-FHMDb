@@ -6,10 +6,7 @@ import com.jfoenix.controls.JFXButton;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
 import java.util.stream.Collectors;
@@ -22,9 +19,11 @@ public class WatchlistCell extends ListCell<Movie> {
     private final Label genre = new Label();
     private final Label releaseYear = new Label();
     private final Label rating = new Label();
-    private final JFXButton showDetails = new JFXButton();
+    private final JFXButton showDetailsBtn = new JFXButton();
     private final JFXButton removeFromWatchlistBtn = new JFXButton();
-    private final HBox titleLayout = new HBox(title, showDetails, removeFromWatchlistBtn);
+    private final Region titleButtonSpacer = new Region();
+    private final Region buttonSpacer = new Region();
+    private final HBox titleLayout = new HBox(title, titleButtonSpacer, showDetailsBtn, buttonSpacer, removeFromWatchlistBtn);
     private final VBox layout = new VBox(titleLayout, detail, genre, releaseYear, rating);
 
 
@@ -51,7 +50,7 @@ public class WatchlistCell extends ListCell<Movie> {
         } else {
             this.getStyleClass().add("movie-cell");
             title.setText(movie.getTitle());
-            showDetails.setText("Show Details");
+            showDetailsBtn.setText("Show Details");
             removeFromWatchlistBtn.setText("Remove");
             detail.setText(
                     movie.getDescription() != null
@@ -65,8 +64,8 @@ public class WatchlistCell extends ListCell<Movie> {
 
             // color scheme
             title.getStyleClass().add("text-yellow");
-            showDetails.getStyleClass().add("text-black");
-            showDetails.getStyleClass().add("background-yellow");
+            showDetailsBtn.getStyleClass().add("text-black");
+            showDetailsBtn.getStyleClass().add("background-yellow");
             removeFromWatchlistBtn.getStyleClass().add("text-black");
             removeFromWatchlistBtn.getStyleClass().add("background-yellow");
             detail.getStyleClass().add("text-white");
@@ -77,6 +76,8 @@ public class WatchlistCell extends ListCell<Movie> {
 
             // layout
             title.fontProperty().set(title.getFont().font(20));
+            HBox.setHgrow(titleButtonSpacer, Priority.ALWAYS);
+            buttonSpacer.setMinWidth(10);
             detail.maxWidthProperty().bind(
                     getListView().widthProperty()
                             .subtract(getListView().getInsets().getLeft()
