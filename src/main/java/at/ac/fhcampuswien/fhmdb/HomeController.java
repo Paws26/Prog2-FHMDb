@@ -262,6 +262,10 @@ public class HomeController implements Initializable {
 
             // Update UI
             observableMovies.setAll(filteredMovies);
+            movieListView.setItems(observableMovies);
+            //use custom cell factory to display data, init with the watchlist click handler
+            movieListView.setCellFactory(movieListView
+                    -> new MovieCell(onAddToWatchlistClicked));
             updateYearComboBox();
 
         } catch (Exception e) {
