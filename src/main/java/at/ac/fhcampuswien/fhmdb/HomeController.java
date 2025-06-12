@@ -3,6 +3,7 @@ package at.ac.fhcampuswien.fhmdb;
 import at.ac.fhcampuswien.fhmdb.database.MovieDataInitializer;
 import at.ac.fhcampuswien.fhmdb.helpers.MovieDisplayHelper;
 import at.ac.fhcampuswien.fhmdb.models.MovieEntity;
+import at.ac.fhcampuswien.fhmdb.movieSorting.MovieSortingContext;
 import at.ac.fhcampuswien.fhmdb.repositories.WatchlistRepository;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
@@ -30,6 +31,7 @@ import javafx.util.StringConverter;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -65,8 +67,9 @@ public class HomeController implements Initializable {
     // automatically updates corresponding UI elements when underlying data changes
     private final ObservableList<Movie> observableMovies =
             FXCollections.observableArrayList();
+    MovieSortingContext sortingContext;
+    Comparator<Movie> comparatorTitle;
 
-    private boolean isAscending = true; //track the current sorting order
     public static final int NO_YEAR_FILTER = -1;
     private Image hamburgerIcon;
     private Image closeIcon;
@@ -98,6 +101,8 @@ public class HomeController implements Initializable {
             // Initialize movie data
             List<Movie> movies = MovieDataInitializer.loadAndCacheMovies();
             observableMovies.addAll(movies);
+            comparatorTitle = Comparator.comparing(Movie::getTitle);
+            sortingContext = new MovieSortingContext(observableMovies, comparatorTitle);
 
             // Set up list view
             movieListView.setItems(observableMovies);
@@ -167,9 +172,8 @@ public class HomeController implements Initializable {
 
         //sort button
         sortBtn.setOnAction(actionEvent -> {
-            isAscending = !isAscending;
-            filterBtn.fire(); // Trigger the filter action to reapply with new sort order
-            sortBtn.setText(isAscending ? "Sort (desc)" : "Sort (asc)");
+            sortingContext.toggleSorting();
+            sortBtn.setText(sortingContext.isAscending() ? "Sort (desc)" : "Sort (asc)");
         });
 
         // Filter button
@@ -255,13 +259,9 @@ public class HomeController implements Initializable {
                         .collect(Collectors.toList());
             }
 
-            // Apply sorting
-            filteredMovies = isAscending ?
-                    MovieDisplayHelper.sortMoviesAscending(FXCollections.observableArrayList(filteredMovies)) :
-                    MovieDisplayHelper.sortMoviesDescending(FXCollections.observableArrayList(filteredMovies));
-
             // Update UI
             observableMovies.setAll(filteredMovies);
+            sortingContext.applyCurrentSorting(); // Apply sorting
             movieListView.setItems(observableMovies);
             //use custom cell factory to display data, init with the watchlist click handler
             movieListView.setCellFactory(movieListView
