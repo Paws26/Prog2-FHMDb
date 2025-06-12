@@ -17,7 +17,7 @@ import java.util.List;
 //Movie api to fetch data from url
 public class MovieAPI {
 
-    private final String endpointUrl = "https://prog2.fh-campuswien.ac.at/movies"; // Initial URL
+    private final String endpointUrl =  new MovieAPIRequestBuilder("https://prog2.fh-campuswien.ac.at/movies").build(); // Initial URL
     private final OkHttpClient client = new OkHttpClient();
 
     /******************************************************************************************************************/
