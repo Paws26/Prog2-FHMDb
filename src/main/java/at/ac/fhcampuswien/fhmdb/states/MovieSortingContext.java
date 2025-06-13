@@ -1,4 +1,4 @@
-package at.ac.fhcampuswien.fhmdb.movieSorting;
+package at.ac.fhcampuswien.fhmdb.states;
 
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import lombok.Getter;

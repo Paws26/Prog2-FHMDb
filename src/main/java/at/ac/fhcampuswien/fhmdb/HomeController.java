@@ -1,9 +1,8 @@
 package at.ac.fhcampuswien.fhmdb;
-
 import at.ac.fhcampuswien.fhmdb.database.MovieDataInitializer;
 import at.ac.fhcampuswien.fhmdb.helpers.MovieDisplayHelper;
 import at.ac.fhcampuswien.fhmdb.models.MovieEntity;
-import at.ac.fhcampuswien.fhmdb.movieSorting.MovieSortingContext;
+import at.ac.fhcampuswien.fhmdb.states.MovieSortingContext;
 import at.ac.fhcampuswien.fhmdb.repositories.WatchlistRepository;
 import at.ac.fhcampuswien.fhmdb.models.Genre;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
@@ -28,6 +27,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
+import lombok.Getter;
 
 import java.io.IOException;
 import java.net.URL;
@@ -63,6 +63,22 @@ public class HomeController implements Initializable {
     private ImageView menuIcon;
     @FXML
     private VBox sidebar;
+
+    @Getter
+    private static HomeController instance;
+
+
+    public HomeController() {
+        if (instance != null) throw new IllegalStateException("Only one instance allowed!");
+        instance = this;
+    }
+
+    public static HomeController getInstanceOrCreate() {
+        if (instance == null) {
+            instance = new HomeController();
+        }
+        return instance;
+    }
 
     // automatically updates corresponding UI elements when underlying data changes
     private final ObservableList<Movie> observableMovies =
@@ -148,9 +164,7 @@ public class HomeController implements Initializable {
         } catch (Exception e) {
             showAlert("Initialization Error", e.getMessage());
         }
-    }
-
-    ;
+    };
 
     //button actions
     private void setupButtonActions() {

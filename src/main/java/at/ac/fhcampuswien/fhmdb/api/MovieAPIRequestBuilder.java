@@ -1,10 +1,9 @@
 package at.ac.fhcampuswien.fhmdb.api;
-
 import at.ac.fhcampuswien.fhmdb.models.Genre;
-
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
+
 
 public class MovieAPIRequestBuilder {
 

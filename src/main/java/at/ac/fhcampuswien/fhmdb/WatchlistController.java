@@ -1,9 +1,8 @@
 package at.ac.fhcampuswien.fhmdb;
-
 import at.ac.fhcampuswien.fhmdb.database.DatabaseException;
+import at.ac.fhcampuswien.fhmdb.factory.ControllerFactory;
 import at.ac.fhcampuswien.fhmdb.models.Movie;
 import at.ac.fhcampuswien.fhmdb.repositories.WatchlistRepository;
-import at.ac.fhcampuswien.fhmdb.ui.MovieCell;
 import at.ac.fhcampuswien.fhmdb.ui.WatchlistCell;
 import at.ac.fhcampuswien.fhmdb.utils.ClickEventHandler;
 import com.jfoenix.controls.JFXButton;
@@ -26,10 +25,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import lombok.Getter;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -70,6 +69,7 @@ public class WatchlistController implements Initializable {
     @FXML
     private VBox sidebar;
 
+
     // automatically updates corresponding UI elements when underlying data changes
     private final ObservableList<Movie> observableMovies = FXCollections.observableArrayList();
 
@@ -87,9 +87,26 @@ public class WatchlistController implements Initializable {
         }
     };
 
+
+    @Getter
+    private static WatchlistController instance;
+
+
     public WatchlistController() {
         loadWatchlist(); // Load data when controller is created
+        if (instance != null) throw new IllegalStateException("Only one instance allowed!");
+        instance = this;
+        loadWatchlist(); // Only after instance is assigned
     }
+
+
+    public static WatchlistController getInstanceOrCreate() {
+        if (instance == null) {
+            instance = new WatchlistController();
+        }
+        return instance;
+    }
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -170,13 +187,16 @@ public class WatchlistController implements Initializable {
 
     //navigate to watchlist
     public void goWatchlist(ActionEvent actionEvent) throws IOException {
-        Parent watchlistRoot = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("watchlist-view.fxml")));
+
+        //Parent watchlistRoot = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("watchlist-view.fxml")));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("watchlist-view.fxml"));
+        loader.setControllerFactory(new ControllerFactory());
+        Parent watchlistRoot = loader.load();
+
         Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
         stage.setScene(new Scene(watchlistRoot));
         stage.show();
-    }
-
-    ;
+    };
 
     //navigate to about
     public void goAbout(ActionEvent actionEvent) {

@@ -1,4 +1,4 @@
-package at.ac.fhcampuswien.fhmdb.movieSorting;
+package at.ac.fhcampuswien.fhmdb.states;
 
 public class UnsortedState implements SortingState {
 
