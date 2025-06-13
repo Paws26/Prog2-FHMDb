@@ -92,15 +92,12 @@ public class WatchlistController implements Initializable {
     private static WatchlistController instance;
 
 
-    public WatchlistController() {
-        loadWatchlist(); // Load data when controller is created
-        if (instance != null) throw new IllegalStateException("Only one instance allowed!");
-        instance = this;
+    private WatchlistController() {
         loadWatchlist(); // Only after instance is assigned
     }
 
 
-    public static WatchlistController getInstanceOrCreate() {
+    public static synchronized WatchlistController getInstance() {
         if (instance == null) {
             instance = new WatchlistController();
         }
@@ -177,28 +174,32 @@ public class WatchlistController implements Initializable {
 
     //navigate to home
     public void goHome(ActionEvent actionEvent) throws IOException {
-        Parent watchlistRoot = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("home-view.fxml")));
-        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(watchlistRoot));
-        stage.show();
-    }
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("home-view.fxml"));
+        loader.setControllerFactory(new ControllerFactory());
+        Parent root = loader.load();
 
-    ;
+        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(root));
+        stage.show();
+    };
 
     //navigate to watchlist
     public void goWatchlist(ActionEvent actionEvent) throws IOException {
 
-        //Parent watchlistRoot = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("watchlist-view.fxml")));
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("watchlist-view.fxml"));
-        loader.setControllerFactory(new ControllerFactory());
-        Parent watchlistRoot = loader.load();
-
-        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(watchlistRoot));
-        stage.show();
+        // Get existing instance if available
+//        WatchlistController controller = WatchlistController.getInstance();
+//
+//        //Parent watchlistRoot = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("watchlist-view.fxml")));
+//        FXMLLoader loader = new FXMLLoader(getClass().getResource("watchlist-view.fxml"));
+//        loader.setController(controller); // Set the existing instance as controller
+//
+//        Parent watchlistRoot = loader.load();
+//        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+//        stage.setScene(new Scene(watchlistRoot));
+//        stage.show();
     };
 
     //navigate to about
     public void goAbout(ActionEvent actionEvent) {
-    }
+    };
 };

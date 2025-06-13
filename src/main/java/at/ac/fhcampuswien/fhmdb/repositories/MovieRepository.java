@@ -25,9 +25,7 @@ public class MovieRepository {
         } catch (SQLException e) {
             throw new DatabaseException(e);
         }
-    }
-
-    ;
+    };
 
     //only used when saving movie list from api in db
     public void saveAll(List<Movie> movies) throws DatabaseException {

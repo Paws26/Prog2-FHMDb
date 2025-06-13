@@ -1,5 +1,6 @@
 package at.ac.fhcampuswien.fhmdb;
 import at.ac.fhcampuswien.fhmdb.database.MovieDataInitializer;
+import at.ac.fhcampuswien.fhmdb.factory.ControllerFactory;
 import at.ac.fhcampuswien.fhmdb.helpers.MovieDisplayHelper;
 import at.ac.fhcampuswien.fhmdb.models.MovieEntity;
 import at.ac.fhcampuswien.fhmdb.states.MovieSortingContext;
@@ -67,18 +68,18 @@ public class HomeController implements Initializable {
     @Getter
     private static HomeController instance;
 
-
-    public HomeController() {
-        if (instance != null) throw new IllegalStateException("Only one instance allowed!");
-        instance = this;
-    }
-
-    public static HomeController getInstanceOrCreate() {
-        if (instance == null) {
-            instance = new HomeController();
-        }
-        return instance;
-    }
+//
+//    private HomeController() {
+//        if (instance != null) throw new IllegalStateException("Only one instance allowed!");
+//        instance = this;
+//    }
+//
+//    public static HomeController getInstanceOrCreate() {
+//        if (instance == null) {
+//            instance = new HomeController();
+//        }
+//        return instance;
+//    }
 
     // automatically updates corresponding UI elements when underlying data changes
     private final ObservableList<Movie> observableMovies =
@@ -265,13 +266,13 @@ public class HomeController implements Initializable {
                 filteredMovies = filteredMovies.stream()
                         .filter(movie -> movie.getReleaseYear() == year)
                         .collect(Collectors.toList());
-            }
+            };
 
             if (rating != null) {
                 filteredMovies = filteredMovies.stream()
                         .filter(movie -> movie.getRating() >= rating)
                         .collect(Collectors.toList());
-            }
+            };
 
             // Update UI
             observableMovies.setAll(filteredMovies);
@@ -284,11 +285,8 @@ public class HomeController implements Initializable {
 
         } catch (Exception e) {
             showAlert("Filter Error", "Failed to apply filters: " + e.getMessage());
-        }
-        ;
-    }
-
-    ;
+        };
+    };
 
     //alert prompt
     private void showAlert(String title, String message) {
@@ -297,35 +295,31 @@ public class HomeController implements Initializable {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
-    }
-
-    ;
+    };
 
     //to home
     public void goHome(ActionEvent actionEvent) throws IOException {
-        Parent watchlistRoot = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("home-view.fxml")));
-        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(watchlistRoot));
-        stage.show();
-    }
-
-    ;
+//        Parent watchlistRoot = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("home-view.fxml")));
+//
+//        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+//        stage.setScene(new Scene(watchlistRoot));
+//        stage.show();
+    };
 
     //Go to watchlist view
     public void goWatchlist(ActionEvent actionEvent) throws IOException {
-        Parent watchlistRoot = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("watchlist-view.fxml")));
-        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(watchlistRoot));
-        stage.show();
-    }
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("watchlist-view.fxml"));
+        loader.setControllerFactory(new ControllerFactory());
+        Parent root = loader.load();
 
-    ;
+        Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(root));
+        stage.show();
+    };
 
     //Not sure for what right now ?
     public void goAbout(ActionEvent actionEvent) {
-    }
-
-    ;
-}
+    };
+};
 
 

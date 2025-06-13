@@ -38,7 +38,7 @@
               style="-fx-background-color: #FFFFFF; -fx-padding: 20;"
               visible="false" prefWidth="200" managed="false">
             <JFXButton text="Home" textFill="black" onAction="#goHome" maxWidth="Infinity"/>
-            <JFXButton text="Watchlist" textFill="black" onAction="#goWatchlist" maxWidth="Infinity"/>
+          <JFXButton text="Watchlist" textFill="black" onAction="#goWatchlist" maxWidth="Infinity"/>
             <JFXButton text="About" textFill="black" onAction="#goAbout" maxWidth="Infinity"/>
         </VBox>
     </right>

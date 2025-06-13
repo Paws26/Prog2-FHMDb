@@ -30,8 +30,7 @@ public class FhmdbApplication extends Application {
             return; // Exit if database fails
         };
 
-        //FXMLLoader fxmlLoader = new FXMLLoader(FhmdbApplication.class.getResource("home-view.fxml"));
-
+        //FXMLLoader = new FXMLLoader(FhmdbApplication.class.getResource("home-view.fxml"));
         FXMLLoader fxmlLoader = new FXMLLoader(FhmdbApplication.class.getResource("home-view.fxml"));
         fxmlLoader.setControllerFactory(new ControllerFactory());
         Parent root = fxmlLoader.load();
